@@ -1,4 +1,4 @@
-export const handleError = (res, error, message) => {
+export const handleError = (res, status, error, message) => {
   console.error(error);
-  res.status(500).render("error/error", { msg: message });
+  res.status(status).render("error/error", { msg: message });
 };
