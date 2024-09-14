@@ -1,4 +1,4 @@
-# Backend II - Pre Entrega 1 - Sofía Cerminati
+# Backend II - Proyecto Final - Sofía Cerminati
 
 Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend II: Diseño y Arquitectura Backend de CODERHOUSE, comisión 70070, con el profesor Omar Jesús Maniás. 
 
@@ -13,7 +13,7 @@ Este proyecto es la programación del Backend del E-Commerce So-Games, para jueg
 7. [Utils](#utils)
 8. [Sesión, Autenticación y Autorización](#sesión-autenticación-y-autorización)
 9. [Visualización y Gestión de E-Commerce en FrontEnd](#visualización-y-gestión-de-e-commerce-en-frontend)
-10. [Esqueleto del Proyecto](#esqueleto-del-proyecto)
+10. [Estructura del Proyecto](#estructura-del-proyecto)
 11. [Recursos Utilizados](#recursos-utilizados)
 
 ## Instalación
@@ -21,13 +21,13 @@ Este proyecto es la programación del Backend del E-Commerce So-Games, para jueg
 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/scerminati/BE2_PE1_Cerminati.git
+git clone https://github.com/scerminati/BE2_PF_Cerminati.git
 ```
 
 2. Navegar al directorio del repositorio
 
 ```bash
-cd BE2_PF1_Cerminati
+cd BE2_PF_Cerminati
 ```
 
 3. Instalar las dependencias
@@ -176,10 +176,10 @@ El archivo `utils.js` contiene una serie de scripts y helpers diseñados para fa
 - **realtimeproducts**: La aplicación cuenta con una funcionalidad en tiempo real que permite la visualización y gestión dinámica de productos desde una vista de administrador. Esta funcionalidad se implementa utilizando **Socket.io** para permitir la comunicación en tiempo real entre el servidor y el cliente, permitiendo eliminar, modificar y añadir productos en la base de datos.
 - **register**: Habilita el registro de un usuario nuevo. 
 
-## Esqueleto del Proyecto
+## Estructura del Proyecto
 
 ```bash
-BE2-PE1-Cerminati
+BE2-PF-Cerminati
 ├── src/
 │   ├── config/
 │   │   └── passport.config.js  # Configuración de Passport para autenticación
@@ -296,4 +296,4 @@ Este proyecto utiliza las siguientes tecnologías y bibliotecas:
   - Versión: `^16.4.5`
 - **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)**: Biblioteca para trabajar con JSON Web Tokens (JWT).
   - Versión: `^9.0.2`
-# BE2_PF_Cerminati
+

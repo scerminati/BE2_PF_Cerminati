@@ -1,4 +1,4 @@
-import { socketServer } from "../app.js";
+import { socketServer } from "../../app.js";
 
 export const emitProductUpdate = async (product) => {
   socketServer.emit("Product Update", product);

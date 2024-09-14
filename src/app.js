@@ -1,7 +1,7 @@
 import express from "express";
 
 import path from "path";
-import __dirname from "./utils/utils.js";
+import __dirname from "./utils/main/dirnameUtils.js";
 
 import session from "express-session";
 import passport from "passport";
@@ -18,7 +18,7 @@ import sessionRouter from "./router/session.router.js";
 import viewsRouter from "./router/views.router.js";
 
 import { Server } from "socket.io";
-import { helpers } from "./utils/utils.js";
+import { helpers } from "./utils/main/handlebarsHelpers.js";
 
 import dotenv from "dotenv";
 
@@ -79,11 +79,11 @@ const hbs = handlebars.create({
 
 //Handlebars
 app.engine("hbs", hbs.engine);
-app.set("views", path.join(__dirname, "../views"));
+app.set("views", path.join(__dirname, "../../views"));
 app.set("view engine", "hbs");
 
 //Estáticos
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../../public")));
 
 //Configuración Socket.io
 const httpServer = app.listen(PORT, () => {

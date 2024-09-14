@@ -1,7 +1,7 @@
 {
-  "name": "preentrega1_backend2",
+  "name": "proyectofinal_backend2",
   "version": "1.0.0",
-  "description": "Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend I: Desarrollo Avanzado de Backend de CODERHOUSE, comisión 70065, con el profesor Omar Jesús Maniás.",
+  "description": "Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend II: Diseño y Arquitectura Backend de CODERHOUSE, comisión 70070, con el profesor Omar Jesús Maniás.",
   "main": "index.js",
   "type": "module",
   "scripts": {

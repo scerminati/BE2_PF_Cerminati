@@ -1,6 +1,6 @@
 import express from "express";
 
-import { authorization, passportCall } from "../utils/passportUtils.js";
+import { authorization, passportCall } from "../utils/session/passportUtils.js";
 import { isAuthenticated, isNotAuthenticated } from "../middleware/auth.js";
 
 import cartsModel from "../models/carts.model.js";
@@ -44,15 +44,16 @@ router.get("/", async (req, res) => {
     result.sort = sort;
     result.category = category;
     result.categories = allCategories;
+    // Construir los enlaces con encodeURIComponent
     result.prevLink = result.hasPrevPage
       ? `/?page=${result.prevPage}${limit < 10 ? `&limit=${limit}` : ""}${
-          sort ? `&sort=${sort}` : ""
-        }${category ? `&category=${category}` : ""}`
+          sort ? `&sort=${encodeURIComponent(sort)}` : ""
+        }${category ? `&category=${encodeURIComponent(category)}` : ""}`
       : "";
     result.nextLink = result.hasNextPage
       ? `/?page=${result.nextPage}${limit < 10 ? `&limit=${limit}` : ""}${
-          sort ? `&sort=${sort}` : ""
-        }${category ? `&category=${category}` : ""}`
+          sort ? `&sort=${encodeURIComponent(sort)}` : ""
+        }${category ? `&category=${encodeURIComponent(category)}` : ""}`
       : "";
     result.isValid = !(page <= 0 || page > result.totalPages);
 
@@ -92,7 +93,7 @@ router.get(
   authorization("admin"),
   async (req, res) => {
     try {
-      const products = await productsModel.find({}); // Cargar todos los productos desde la base de datos
+      const products = await productsModel.find({}).sort({ id: 1 }); // Cargar todos los productos desde la base de datos
       res.render("admin/realtimeproducts", {
         products,
       });
@@ -111,43 +112,48 @@ const populateCarrito = async (carrito) => {
   });
 };
 
-// Ruta para mostrar el contenido del carrito 
+// Ruta para mostrar el contenido del carrito
 
-router.get("/carts/:cid", passportCall("jwt"),isAuthenticated, async (req, res) => {
-  try {
-    const cartId = req.params.cid;
-    let carritoEncontrado = await cartsModel.findOne({ _id: cartId });
+router.get(
+  "/carts/:cid",
+  passportCall("jwt"),
+  isAuthenticated,
+  async (req, res) => {
+    try {
+      const cartId = req.params.cid;
+      let carritoEncontrado = await cartsModel.findOne({ _id: cartId });
 
-    if (!carritoEncontrado) {
-      return res
-        .status(404)
-        .render("error/error", { msg: "Carrito no encontrado." });
+      if (!carritoEncontrado) {
+        return res
+          .status(404)
+          .render("error/error", { msg: "Carrito no encontrado." });
+      }
+
+      carritoEncontrado = await populateCarrito(carritoEncontrado);
+      carritoEncontrado = {
+        ...carritoEncontrado.toObject(),
+        products: carritoEncontrado.products.map((product) => ({
+          ...product.product.toObject(),
+          quantity: product.quantity,
+        })),
+      };
+
+      let totalPrice = carritoEncontrado.products.reduce((acc, product) => {
+        return acc + product.price * product.quantity;
+      }, 0);
+
+      totalPrice = totalPrice.toFixed(2);
+
+      res.render("users/cart", {
+        cart: carritoEncontrado,
+        totalPrice,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ msg: "Error al obtener el carrito." });
     }
-
-    carritoEncontrado = await populateCarrito(carritoEncontrado);
-    carritoEncontrado = {
-      ...carritoEncontrado.toObject(),
-      products: carritoEncontrado.products.map((product) => ({
-        ...product.product.toObject(),
-        quantity: product.quantity,
-      })),
-    };
-
-    let totalPrice = carritoEncontrado.products.reduce((acc, product) => {
-      return acc + product.price * product.quantity;
-    }, 0);
-
-    totalPrice = totalPrice.toFixed(2);
-
-    res.render("users/cart", {
-      cart: carritoEncontrado,
-      totalPrice,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Error al obtener el carrito." });
   }
-});
+);
 
 router.get("/login", isNotAuthenticated, (req, res) => {
   res.render("users/login");

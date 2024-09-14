@@ -1,10 +1,13 @@
 import express from "express";
 import userModel from "../models/user.model.js";
 import cartsModel from "../models/carts.model.js";
-import { getNextIdC } from "../utils/utils.js";
-import { createHash, passwordValidation } from "../utils/passwordUtils.js";
-import { generateToken } from "../utils/webTokenUtil.js";
-import { passportCall } from "../utils/passportUtils.js";
+import { getNextIdC } from "../utils/database/idUtils.js";
+import {
+  createHash,
+  passwordValidation,
+} from "../utils/session/passwordUtils.js";
+import { generateToken } from "../utils/session/webTokenUtil.js";
+import { passportCall } from "../utils/session/passportUtils.js";
 
 const router = express.Router();
 
@@ -15,7 +18,9 @@ router.post("/register", async (req, res) => {
     let user = await userModel.findOne({ email });
     if (user) {
       console.log("El usuario ya existe");
-      return res.status(400).send({ msg: "El correo electrónico ya está en uso" });
+      return res
+        .status(400)
+        .send({ msg: "El correo electrónico ya está en uso" });
     }
 
     const newUser = {
@@ -50,7 +55,6 @@ router.post("/register", async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     console.error("Error al registrar usuario:", error);
-    
   }
 });
 
@@ -85,7 +89,6 @@ router.post("/logout", (req, res) => {
 //Current user
 router.get("/current", passportCall("jwt"), async (req, res) => {
   try {
-    
     const user = await userModel.findById(req.user._id).populate("cart");
 
     if (!user) {
@@ -99,14 +102,13 @@ router.get("/current", passportCall("jwt"), async (req, res) => {
       email: user.email,
       age: user.age,
       role: user.role,
-      cart: user.cart, 
+      cart: user.cart,
     });
   } catch (error) {
     console.error("Error al obtener los datos del usuario logueado:", error);
     res.status(500).send({ error: "Error al obtener los datos del usuario" });
   }
 });
-
 
 router.post("/checkout", passportCall("jwt"), async (req, res) => {
   //Acá tendría que añadir una collection con mis checkouts, donde tenga usuario, address, etc.... datos de usuario + compra.

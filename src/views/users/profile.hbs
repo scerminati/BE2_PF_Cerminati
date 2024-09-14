@@ -7,13 +7,18 @@
 <p>Email: {{user.email}}</p>
 <p>Edad: {{user.age}}</p>
 <form action="/api/sessions/logout" method="POST">
-  <button type="submit">Cerrar Sesión</button>
+  <div class="center">
+    <button type="submit">Cerrar Sesión</button>
+    <a href="/"><button type="button">Volver al inicio</button></a>
+  </div>
 </form>
 
 {{#if (eq user.role "admin")}}
-  <a href="/realtimeproducts">
-    <button>Modificar Productos</button>
-  </a>
+  <br /><hr /><br />
+  <h3>Opciones de Administrador</h3>
+  <div class="center">
+    <a href="/realtimeproducts">
+      <button>Modificar Productos</button>
+    </a>
+  </div>
 {{/if}}
-
-<a href="/"><button>Volver al inicio</button></a>

@@ -2,7 +2,8 @@
   <h1>Realtime Dashboard</h1>
   <p>Vista de Administrador.</p>
   <br />
-  <button id="addProdbtn">Añadir un Producto</button>
+  <div class="center"><button id="addProdbtn">Añadir un Producto</button>
+    <a href="/"><button>Volver al inicio</button></a></div>
   <div id="addProdForm">
     <h4 id="tituloHTML">Añadir un producto</h4>
     <br />
@@ -49,20 +50,22 @@
         <label for="thumbnail">Imagen:</label>
         <input type="file" id="thumbnail" name="thumbnail" accept="image/*" />
       </p>
-      <div class="flexDiv">
+
+      <div class="center">
         <div class="thumbnailPrev">
           <img
             id="thumbnailPreview"
             src="./images/no-image.jpg"
             alt="Thumbnail Preview"
             class="imgthumb"
-          /></div>
-
+          /></div></div>
+      <div class="center">
         <button type="submit" id="submitBtn">Enviar</button>
         <button type="reset" id="resetBtn">Resetear</button></div>
+
     </form>
     <p>*Los campos son obligatorios para añadir o modificar un producto.</p>
-    <button id="cancel">Cancelar Operación</button>
+    <div class="center"><button id="cancel">Cancelar Operación</button></div>
   </div><br />
   <div id="listProd"><h2>Listado de Productos</h2>
     <div class="listado"><div id="listado">

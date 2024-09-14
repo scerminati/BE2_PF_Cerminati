@@ -2,7 +2,8 @@ import express from "express";
 
 import productsModel from "../models/products.model.js";
 
-import { getNextId, uploader } from "../utils/utils.js";
+import { getNextId } from "../utils/database/idUtils.js";
+import { uploader } from "../utils/database/multerUtils.js";
 import { socketServer } from "../app.js";
 
 const router = express.Router();
@@ -110,7 +111,6 @@ router.post("/", uploader.single("thumbnail"), async (req, res) => {
   }
 });
 
-
 // Modificar un producto por ID
 router.put("/:pid", uploader.single("thumbnail"), async (req, res) => {
   try {
@@ -151,12 +151,13 @@ router.put("/:pid", uploader.single("thumbnail"), async (req, res) => {
   }
 });
 
-
 // Eliminar un producto por ID
 router.delete("/:pid", async (req, res) => {
   try {
     const idProducto = req.params.pid;
-    const deletedProduct = await productsModel.findOneAndDelete({ id: idProducto });
+    const deletedProduct = await productsModel.findOneAndDelete({
+      id: idProducto,
+    });
 
     if (deletedProduct) {
       socketServer.emit("Product Deleted", deletedProduct);
@@ -172,6 +173,5 @@ router.delete("/:pid", async (req, res) => {
     res.status(500).json({ msg: "Error al eliminar el producto." });
   }
 });
-
 
 export default router;

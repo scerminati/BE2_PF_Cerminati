@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             try {
               const response = await fetch("../api/sessions/checkout", {
                 method: "POST",
-                credentials: "include", 
+                credentials: "include",
               });
 
               if (!response.ok) {
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               setTimeout(() => {
                 carritoVacio();
               }, 1000);
-             
+
               setTimeout(() => {
                 window.location.href = "/";
               }, 2000);
