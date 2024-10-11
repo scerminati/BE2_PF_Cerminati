@@ -27,7 +27,7 @@ const DATABASE_URL = process.env.DATABASE_URL;
 const SECRET_PASSPORT = process.env.SECRET_PASSPORT;
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT;
 
 //Middlewares
 app.use(express.json());
