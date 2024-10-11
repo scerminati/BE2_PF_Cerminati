@@ -1,6 +1,6 @@
 import express from "express";
-import userModel from "../models/user.model.js";
-import cartsModel from "../models/carts.model.js";
+import userModel from "../backend/models/user.model.js";
+import cartsModel from "../backend/models/carts.model.js";
 import { getNextIdC } from "../utils/database/idUtils.js";
 import {
   createHash,

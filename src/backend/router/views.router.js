@@ -1,10 +1,13 @@
 import express from "express";
 
 import { authorization, passportCall } from "../utils/session/passportUtils.js";
-import { isAuthenticated, isNotAuthenticated } from "../middleware/auth.js";
+import {
+  isAuthenticated,
+  isNotAuthenticated,
+} from "../backend/middleware/auth.js";
 
-import cartsModel from "../models/carts.model.js";
-import productsModel from "../models/products.model.js";
+import cartsModel from "../backend/models/carts.model.js";
+import productsModel from "../backend/models/products.model.js";
 
 const router = express.Router();
 
@@ -178,6 +181,5 @@ router.get("/faillogin", (req, res) => {
     msg: "Login fallido. Por favor, revisa tus credenciales.",
   });
 });
-
 
 export default router;

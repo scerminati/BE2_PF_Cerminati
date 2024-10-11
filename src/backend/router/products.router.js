@@ -1,6 +1,6 @@
 import express from "express";
 
-import productsModel from "../models/products.model.js";
+import productsModel from "../backend/models/products.model.js";
 
 import { getNextId } from "../utils/database/idUtils.js";
 import { uploader } from "../utils/database/multerUtils.js";
