@@ -1,3 +1,17 @@
+Lista de pendientes:
+1. Routeo para arquitecturas por capas
+- Controller
+- Service
+- Factory ?
+- DAO
+- DTO ?
+- Repository ?
+2. Autentificación, modificar los archivos PassportUtils y auth.js para que auth.js me haga todo con la estrategia jwt, de manera que quede. Si el usuario no está autentificado, redireccionar a login, sino, verificar rol, mandar error, sino, permitir acceso. Para modificar Products, Carts, y Users. (Qué hago con views)
+3. Chequear Views, está raro para renderizar
+4. Ver clase Mailing -> ticket de checkout en pdf?
+5. Actualizar ReadMe
+6. Una vez que está todo eso hecho, realizar un realTimeUsers, para poder modificar los usuarios (solo los accesos), y Eliminarlos en caso de que sea necesario.
+
 # Backend II - Proyecto Final - Sofía Cerminati
 
 Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend II: Diseño y Arquitectura Backend de CODERHOUSE, comisión 70070, con el profesor Omar Jesús Maniás. 

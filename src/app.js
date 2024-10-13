@@ -12,10 +12,11 @@ import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
 import handlebars from "express-handlebars";
 
-import cartRouter from "./router/cart.router.js";
-import productsRouter from "./router/products.router.js";
-import sessionRouter from "./router/session.router.js";
-import viewsRouter from "./router/views.router.js";
+import cartRouter from "./router/cart.routerold.js";
+import productsRouter from "./router/products.routerold.js";
+import sessionRouter from "./router/session.routerold.js";
+import viewsRouter from "./router/views.routerold.js";
+import usersRouter from "./router/users.routerold.js";
 
 import { Server } from "socket.io";
 import { helpers } from "./utils/main/handlebarsHelpers.js";
@@ -66,6 +67,7 @@ mongoose
 //Rutas
 app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/", viewsRouter);
 
