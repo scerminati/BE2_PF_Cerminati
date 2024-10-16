@@ -2,16 +2,16 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/",getAllCarts)
-router.get("/:cid",getCart)
-router.get("/:cid/QT",getCartQT)
+router.get("/",getAllCartsController)
+router.get("/:cid",getCartController)
+router.get("/:cid/QT",getCartQTController)
 
-router.post("/",createCart)
+router.post("/",createCartController)
 
-router.put("/:cid/product/:pid",editProductInCart)
+router.put("/:cid/product/:pid",editProductInCartController)
 
-router.delete("/:cid",deleteCart)
-router.delete("/:cid/product/:pid",deleteProductInCart)
+router.delete("/:cid",deleteCartController)
+router.delete("/:cid/product/:pid",deleteProductInCartController)
 
 
 export default router;

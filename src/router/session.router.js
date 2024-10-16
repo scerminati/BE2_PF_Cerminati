@@ -2,12 +2,12 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/current",getLoggedUser)
+router.get("/current",getLoggedUserController)
 
-router.post("/register",registerUser)
-router.post("/login",loginUser)
-router.post("/logout",logoutUser)
-router.post("/checkout",checkoutCart)
+router.post("/register",registerUserController)
+router.post("/login",loginUserController)
+router.post("/logout",logoutUserController)
+router.post("/checkout",checkoutCartController)
 
 
 export default router;

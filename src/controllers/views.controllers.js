@@ -1,0 +1,1 @@
+export const xxx = async (req, res) => {};

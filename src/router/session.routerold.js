@@ -1,6 +1,6 @@
 import express from "express";
-import userModel from "../models/user.model.js";
-import cartsModel from "../models/carts.model.js";
+import userModel from "../DAO/models/user.model.js";
+import cartsModel from "../DAO/models/carts.model.js";
 import { getNextIdC } from "../utils/database/idUtils.js";
 import {
   createHash,
@@ -63,21 +63,31 @@ router.post("/login", async (req, res) => {
 
   try {
     const user = await userModel.findOne({ email });
+
+    // Verificar si el usuario existe
     if (!user) {
       console.log("El usuario no existe");
-    }
-    if (!passwordValidation(user, password)) {
-      console.log("Contraseña incorrecta");
+      return res.status(404).send({ msg: "El usuario no existe" });
     }
 
+    // Verificar la contraseña
+    if (!passwordValidation(user, password)) {
+      console.log("Contraseña incorrecta");
+      return res.status(401).send({ msg: "Contraseña incorrecta" });
+    }
+
+    // Si la validación es exitosa, genera el JWT y redirige
     res.cookie("jwt", generateToken(user), {
       httpOnly: true,
       secure: false,
     });
-    res.redirect("/profile");
+
+    return res.redirect("/profile");
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
-    res.status(500).send({ msg: "Error en el servidor al iniciar sesión" });
+    return res
+      .status(500)
+      .send({ msg: "Error en el servidor al iniciar sesión" });
   }
 });
 

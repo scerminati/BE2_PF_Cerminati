@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 import handlebars from "express-handlebars";
 
 import cartRouter from "./router/cart.routerold.js";
-import productsRouter from "./router/products.routerold.js";
+import productsRouter from "./router/products.router.js";
 import sessionRouter from "./router/session.routerold.js";
 import viewsRouter from "./router/views.routerold.js";
 import usersRouter from "./router/users.routerold.js";

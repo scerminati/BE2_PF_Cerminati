@@ -1,10 +1,14 @@
 // idUtils.js
-import cartsModel from "../../models/carts.model.js";
-import productsModel from "../../models/products.model.js";
+import cartsModel from "../../DAO/models/carts.model.js";
+import productsModel from "../../DAO/models/products.model.js";
 
 export async function getNextId() {
   try {
-    const lastProduct = await productsModel.findOne({}, {}, { sort: { id: -1 } });
+    const lastProduct = await productsModel.findOne(
+      {},
+      {},
+      { sort: { id: -1 } }
+    );
     return lastProduct ? lastProduct.id + 1 : 1;
   } catch (error) {
     console.error("Error al obtener el siguiente ID:", error);

@@ -1,7 +1,7 @@
 import express from "express";
 
-import cartsModel from "../models/carts.model.js";
-import productsModel from "../models/products.model.js";
+import cartsModel from "../DAO/models/carts.model.js";
+import productsModel from "../DAO/models/products.model.js";
 
 import { socketServer } from "../app.js";
 import { getNextIdC } from "../utils/database/idUtils.js";

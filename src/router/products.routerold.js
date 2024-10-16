@@ -1,6 +1,6 @@
 import express from "express";
 
-import productsModel from "../models/products.model.js";
+import productsModel from "../DAO/models/products.model.js";
 
 import { getNextId } from "../utils/database/idUtils.js";
 import { uploader } from "../utils/database/multerUtils.js";
@@ -19,6 +19,7 @@ router.use(async (req, res, next) => {
     res.status(500).json({ msg: "Error al cargar los productos." });
   }
 });
+//ESTO NO LO AÑADÍ
 
 // Obtener todos los productos
 router.get("/", async (req, res) => {
