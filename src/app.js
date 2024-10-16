@@ -12,7 +12,7 @@ import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
 import handlebars from "express-handlebars";
 
-import cartRouter from "./router/cart.routerold.js";
+import cartRouter from "./router/cart.router.js";
 import productsRouter from "./router/products.router.js";
 import sessionRouter from "./router/session.routerold.js";
 import viewsRouter from "./router/views.routerold.js";

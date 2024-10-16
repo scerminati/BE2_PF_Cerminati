@@ -16,12 +16,12 @@ export const getAllProductsController = async (req, res) => {
     const productosLimitados =
       !isNaN(limit) && limit > 0 ? products.slice(0, limit) : products;
 
-    return res.status(200).json({
+    return res.status(201).json({
       msg:
         productosLimitados.length < products.length
           ? `Mostrando los primeros ${limit} productos`
           : "Mostrando todos los productos",
-      productos: productosLimitados,
+      payload: productosLimitados,
     });
   } catch (error) {
     console.log(error);
@@ -35,9 +35,9 @@ export const getProductController = async (req, res) => {
     const productoEncontrado = await productService.getProduct(idProducto);
 
     if (productoEncontrado) {
-      res.status(200).json({
+      res.status(201).json({
         msg: `Mostrando el producto con id ${idProducto}`,
-        productoEncontrado,
+        payload: productoEncontrado,
       });
     } else {
       res.status(404).json({ msg: "No se encuentra el producto con dicho id" });
@@ -70,7 +70,6 @@ export const createProductController = async (req, res) => {
     });
   }
 
-  let status = stock > 0;
   try {
     const newProduct = {
       id: await productService.nextId(),
@@ -78,7 +77,6 @@ export const createProductController = async (req, res) => {
       description,
       code,
       price,
-      status,
       stock,
       category,
       thumbnail,
@@ -87,8 +85,8 @@ export const createProductController = async (req, res) => {
     await productService.createProduct(newProduct);
     socketServer.emit("Product Update", newProduct);
     res.status(201).json({
-      msg: `Producto agregado exitosamente con id ${newProduct.id}`,
-      newProduct,
+      msg: `Producto agregado exitosamente con id ${newProduct._id}`,
+      payload: newProduct,
     });
   } catch (error) {
     console.error(error);
@@ -109,7 +107,6 @@ export const editProductController = async (req, res) => {
     ...(code && { code: parseInt(code) }),
     ...(price && { price: parseFloat(price) }),
     ...(stock !== undefined && { stock: parseInt(stock) }),
-    status: stock > 0,
     ...(category && { category }),
     ...(thumbnail && { thumbnail }),
   };
@@ -122,9 +119,9 @@ export const editProductController = async (req, res) => {
 
     if (updatedProduct) {
       socketServer.emit("Product Update", updatedProduct);
-      res.status(200).json({
+      res.status(201).json({
         msg: `Producto modificado correctamente en el id ${idProducto}`,
-        productoModificado: updatedProduct,
+        payload: updatedProduct,
       });
     } else {
       res.status(404).json({ msg: "No se encuentra el producto con dicho id" });
@@ -143,9 +140,9 @@ export const deleteProductController = async (req, res) => {
 
     if (deletedProduct) {
       socketServer.emit("Product Deleted", deletedProduct);
-      res.status(200).json({
+      res.status(201).json({
         msg: `Se eliminó el producto con id ${idProducto}`,
-        productoAEliminar: deletedProduct,
+        payload: deletedProduct,
       });
     } else {
       res.status(404).json({ msg: "No se encuentra el producto con dicho id" });

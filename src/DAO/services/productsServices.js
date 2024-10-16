@@ -12,7 +12,7 @@ export default class Product {
 
   getProduct = async (id) => {
     try {
-      return await productsModel.findOne({ id: id });
+      return await productsModel.findOne({ _id: id });
     } catch (error) {
       console.error(error);
       throw error;
@@ -34,8 +34,13 @@ export default class Product {
   };
 
   createProduct = async (product) => {
+    if (product.stock > 0) {
+      product.status = true;
+    } else {
+      product.status = false;
+    }
     try {
-      return productsModel.create(product);
+      return await productsModel.create(product);
     } catch (error) {
       console.error(error);
       throw error;
@@ -43,8 +48,13 @@ export default class Product {
   };
 
   editProduct = async (id, updateData) => {
+    if (updateData.stock > 0) {
+      updateData.status = true;
+    } else {
+      updateData.status = false;
+    }
     try {
-      return await productsModel.findOneAndUpdate({ id: id }, updateData, {
+      return await productsModel.findOneAndUpdate({ _id: id }, updateData, {
         new: true,
       });
     } catch (error) {
@@ -56,7 +66,7 @@ export default class Product {
   deleteProduct = async (id) => {
     try {
       return await productsModel.findOneAndDelete({
-        id: id,
+        _id: id,
       });
     } catch (error) {
       console.error(error);

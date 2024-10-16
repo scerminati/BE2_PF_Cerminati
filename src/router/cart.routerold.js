@@ -141,7 +141,7 @@ router.put("/:cid/product/:pid", async (req, res) => {
         .json({ msg: `El carrito con id ${idCarrito} no existe.` });
     }
 
-    const productoAAgregar = await productsModel.findOne({ _id: idProducto });
+    const productoAAgregar = await productsModel.findOne({ id: idProducto });
     if (!productoAAgregar) {
       return res
         .status(404)
