@@ -69,6 +69,28 @@ export default class Product {
     }
   };
 
+  editStock = async (id, stock) => {
+    let status
+    if (stock > 0) {
+      status = true;
+    } else {
+      status = false;
+    }
+    try {
+      const product = await productsModel.findOneAndUpdate(
+        { _id: id },
+        {stock, status},
+        {
+          new: true,
+        }
+      );
+      return product ? product : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   deleteProduct = async (id) => {
     try {
       const product = await productsModel.findOneAndDelete({

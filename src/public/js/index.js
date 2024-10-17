@@ -73,6 +73,17 @@ socket.on("Product Update", (updatedProduct) => {
   if (stockElement) {
     // Actualizar el stock en la vista
     stockElement.innerHTML = `Stock: ${updatedProduct.stock}`;
+
+    const button = document.querySelector(
+      `button[data-product-id="${updatedProduct._id}"]`
+    );
+    if (button) {
+      if (updatedProduct.stock > 0) {
+        button.classList.remove("invisible"); // Mostrar el botón si hay stock
+      } else {
+        button.classList.add("invisible"); // Ocultar el botón si no hay stock
+      }
+    }
   }
 });
 

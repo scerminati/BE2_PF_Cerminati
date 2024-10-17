@@ -20,14 +20,6 @@ export const passportCall = (strategy) => {
   };
 };
 
-export const authorization = (role) => {
-  return async (req, res, next) => {
-    if (!req.user) return res.status(401).send({ error: "Not Authenticated" });
-    if (req.user.role !== role)
-      return res.status(403).send({ error: "Not correct role, no permission" });
-    next();
-  };
-};
 
 export const isNotAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
@@ -47,6 +39,7 @@ export const isNotAuthenticated = (req, res, next) => {
 // Middleware para verificar si el usuario está autenticado
 export const isAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    
     if (err) {
       return next(err);
     }
@@ -54,7 +47,7 @@ export const isAuthenticated = (req, res, next) => {
       // Si el usuario no está autenticado, redirige al login
       return res.redirect("/login");
     }
-
+  
     // Si el usuario está autenticado, continúa
     req.user = user;
     next();
