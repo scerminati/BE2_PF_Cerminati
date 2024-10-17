@@ -70,7 +70,7 @@
   <div id="listProd"><h2>Listado de Productos</h2>
     <div class="listado"><div id="listado">
         {{#each products}}
-          <div id="{{this.id}}" class="productoBox">
+          <div id="{{this._id}}" class="productoBox">
             <p class="flex0">ID: {{this.id}}</p>
             <p class="flex1">
               Producto:
@@ -82,12 +82,12 @@
             <button
               type="button"
               class="btn-modify flex4"
-              data-product-id="{{this.id}}"
+              data-product-id="{{this._id}}"
             >Modificar</button>
             <button
               type="button"
               class="btn-delete flex5"
-              data-product-id="{{this.id}}"
+              data-product-id="{{this._id}}"
             >Eliminar</button>
 
           </div>

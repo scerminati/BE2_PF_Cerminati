@@ -23,9 +23,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
       const response = await fetch(`/api/carts/${cartId}`);
       if (response.ok) {
-        const carrito = await response.json();
+        let { payload: carrito } = await response.json();
 
-        if (carrito.carritoEncontrado.products.length > 0) {
+        if (carrito.products.length > 0) {
           // Elementos del DOM
           const cartList = document.getElementById("listado");
           const clearCartBtn = document.getElementById("clearCart");
@@ -48,7 +48,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
-              const updatedCart = await response.json();
+              let { payload: updatedCart } = await response.json();
+
               socket.emit("Cart Update", updatedCart);
               carritoVacio();
               tostada("Carrito vacío, todos los productos eliminados");
@@ -74,8 +75,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 throw new Error("Error al procesar la compra");
               }
 
-              const data = await response.json();
-              tostada(data.msg);
+              let { msg: data } = await response.json();
+              tostada(data);
 
               setTimeout(() => {
                 carritoVacio();
@@ -100,28 +101,28 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const productElement = document.createElement("div");
                 productElement.classList.add("productoBox");
                 productElement.innerHTML = `<h3 class="flex1c">${
-                  product.title
+                  product.product.title
                 }</h3>
-            <p class="flex2c">Precio: $${product.price}</p>
+            <p class="flex2c">Precio: $${product.product.price}</p>
             <p class="flex2c">Cantidad: ${product.quantity}</p>
-            <p class="flex2c">Stock: ${product.stock}</p>
+            <p class="flex2c">Stock: ${product.product.stock}</p>
 
             <input
               type="number"
               name="quantity"
               min="1"
-              max="${product.stock + product.quantity}"
+              max="${product.product.stock + product.quantity}"
               value="${product.quantity}"
               class="flex3c"
-              data-product-id="${product._id}"
+              data-product-id="${product.product._id}"
             />
             <button
               class="flex4c btn-update"
-              data-product-idu="${product._id}"
+              data-product-idu="${product.product._id}"
             >Actualizar</button>
             <button
               class="flex4c btn-remove"
-              data-product-idr="${product._id}"
+              data-product-idr="${product.product._id}"
             >Eliminar</button>    `;
                 cartList.appendChild(productElement);
               });
@@ -130,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               if (totalPriceElement) {
                 const totalPrice = cart.products
                   .reduce(
-                    (acc, product) => acc + product.price * product.quantity,
+                    (acc, product) => acc + product.product.price * product.quantity,
                     0
                   )
                   .toFixed(2);
@@ -173,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                const updatedCart = await response.json();
+                let { payload: updatedCart } = await response.json();
                 tostada("Cantidad de producto actualizado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {
@@ -201,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                const updatedCart = await response.json();
+                let { payload: updatedCart } = await response.json();
                 tostada("Producto Eliminado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {

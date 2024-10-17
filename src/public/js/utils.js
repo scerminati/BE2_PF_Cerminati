@@ -9,7 +9,7 @@ const getCartId = async () => {
 
     if (!response.ok) {
       if (response.status === 401) {
-        console.error("Usuario no logueado");
+        console.log("Usuario no logueado");
         return null;
       }
       throw new Error(
@@ -32,15 +32,15 @@ const getQT = async () => {
     try {
       const response = await fetch(`/api/carts/${cartId}/QT`);
       if (response.ok) {
-        const data = await response.json();
-        cartCount.innerText = data.totalProductos;
+        let { payload: data } = await response.json();
+        cartCount.innerText = data;
       } else {
         console.error(`Error al cargar QT: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error:", error.message);
     }
-  } else {
+  } else if (cartCount) {
     cartCount.innerText = 0;
   }
 };

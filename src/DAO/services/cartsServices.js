@@ -141,13 +141,14 @@ export default class Cart {
             select: "id title price stock",
           });
 
-          return {
+          let response = {
             ...populatedCart.toObject(),
             products: populatedCart.products.map((product) => ({
-              ...product.toObject(),
-              quantity: product.quantity,
+              product: product.product, // Mantiene todo el objeto del producto
+              quantity: product.quantity, // Extrae la cantidad
             })),
           };
+          return response;
         })
       );
 

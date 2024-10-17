@@ -25,6 +25,7 @@ const updateCartLink = async () => {
   if (cartId) {
     const cartLink = document.getElementById("cartLink");
     cartLink.href = `/carts/${cartId}`;
+    getQT();
   } else {
     cartLink.href = `/login`;
   }

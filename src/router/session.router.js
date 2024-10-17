@@ -8,7 +8,7 @@ import {
   checkoutCartController,
 } from "../controllers/sessions.controller.js";
 
-import { passportCall } from "../utils/session/passportUtils.js";
+import { passportCall } from "../middleware/auth.js";
 
 const router = express.Router();
 

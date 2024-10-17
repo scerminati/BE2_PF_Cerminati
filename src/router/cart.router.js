@@ -10,6 +10,8 @@ import {
   deleteProductInCartController,
 } from "../controllers/carts.controllers.js";
 
+import { isAuthenticated, isUserCart } from "../middleware/auth.js";
+
 const router = express.Router();
 
 router.get("/", getAllCartsController);

@@ -36,7 +36,6 @@ export const getCartController = async (req, res) => {
   const idCarrito = req.params.cid;
   try {
     let cart = await cartService.getCart(idCarrito);
-
     if (!cart) {
       return res
         .status(404)
@@ -117,13 +116,12 @@ export const editProductInCartController = async (req, res) => {
       quantity = productoEnCarrito ? productoEnCarrito.quantity + 1 : 1;
     }
 
-    console.log(quantity);
+ 
     if (productoEnCarrito) {
       if (productToAdd.stock + productoEnCarrito.quantity >= quantity) {
         productToAdd.stock =
           productoEnCarrito.quantity + productToAdd.stock - quantity;
 
-        console.log("hola?");
       } else {
         return res
           .status(404)
@@ -144,7 +142,7 @@ export const editProductInCartController = async (req, res) => {
       productToAdd
     );
     socketServer.emit("Product Update", productAdded);
-    console.log(cart);
+    
     let cartUpdated = await cartService.editCart(
       idCarrito,
       idProducto,
@@ -154,7 +152,7 @@ export const editProductInCartController = async (req, res) => {
 
     res.status(202).json({
       msg: `El producto ${idProducto} ha sido agregado correctamente al carrito ${idCarrito}`,
-      cartUpdated,
+      payload: cartUpdated,
     });
   } catch (error) {
     console.error(error);
@@ -171,7 +169,7 @@ export const emptyCartController = async (req, res) => {
       res.status(404).json({ msg: "No se encuentra el carrito con dicho id" });
     }
 
-    console.log(cartToEmpty, "Antes de reajuste de stock");
+    
     // Reajustar el stock de los productos en el carrito
     for (const item of cartToEmpty.products) {
       let idProd = item.product._id;
@@ -192,7 +190,7 @@ export const emptyCartController = async (req, res) => {
 
     res.status(200).json({
       msg: `Eliminados todos los productos del carrito con id ${idCarrito}`,
-      emptyCart,
+      payload: emptyCart,
     });
   } catch (error) {
     console.log(error);
@@ -226,13 +224,13 @@ export const deleteProductInCartController = async (req, res) => {
     productService.editProduct(idProduct, producto);
     socketServer.emit("Product Update", producto);
 
-    let cartMofidied = await cartService.getCart(idCarrito);
+    let cartModified = await cartService.getCart(idCarrito);
 
-    socketServer.emit("Cart Update", cartMofidied);
+    socketServer.emit("Cart Update", cartModified);
 
     res.status(200).json({
       msg: `Producto con id ${idProduct} eliminado del carrito con id ${idCarrito}`,
-      cartMofidied,
+      payload: cartModified,
     });
   } catch (error) {
     console.log(error);

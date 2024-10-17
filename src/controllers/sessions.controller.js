@@ -22,7 +22,7 @@ export const getLoggedUserController = async (req, res) => {
     }
 
     // Envía la información del usuario como respuesta
-    res.send({
+    res.send( {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,

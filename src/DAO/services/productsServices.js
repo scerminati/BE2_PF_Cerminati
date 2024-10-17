@@ -80,4 +80,31 @@ export default class Product {
       throw error;
     }
   };
+
+  paginateProducts = async (filter, values, sort) => {
+    try {
+      let products;
+      if (!filter && !values) {
+        products = await productsModel.find({}).sort({id: 1});
+      } else if (sort) {
+        products = await productsModel.paginate(filter, values, sort);
+      } else {
+        products = await productsModel.paginate(filter, values);
+      }
+      return products ? products : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  categoryProducts = async () => {
+    try {
+      const categories = await productsModel.distinct("category");
+      return categories ? categories : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 }

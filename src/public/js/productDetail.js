@@ -28,21 +28,23 @@ socket.on("Product Update", (updatedProduct) => {
   }
 });
 
-
 // Función para verificar si el producto está en el carrito
 const isProductInCart = async (cartId, productId) => {
   try {
     const response = await fetch(`/api/carts/${cartId}`);
     if (response.ok) {
-      const cart = await response.json();
-      return cart.carritoEncontrado.products.some(
+      let { payload: cart } = await response.json();
+      return cart.products.some(
         (product) => product._id.toString() === productId
       );
     } else {
       throw new Error("No se pudo obtener el carrito.");
     }
   } catch (error) {
-    console.error("Error al verificar el producto en el carrito:", error.message);
+    console.error(
+      "Error al verificar el producto en el carrito:",
+      error.message
+    );
     return false;
   }
 };
@@ -66,7 +68,7 @@ const addToCart = async (cartId, productId, quantity) => {
       throw new Error("No se pudo agregar el producto al carrito");
     }
   } catch (error) {
-    console.error("Error:", error,message);
+    console.error("Error:", error, message);
   }
 };
 
@@ -76,7 +78,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (cartId) {
     const cartLink = document.getElementById("cartLink");
     cartLink.href = `/carts/${cartId}`;
-    
   } else {
     cartLink.href = `/login`;
   }
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       try {
         const response = await fetch(`/api/carts/${cartId}/QT`);
         if (response.ok) {
-          const data = await response.json();
+          let { payload: data } = await response.json();
           cartCount.innerText = data.totalProductos;
         } else {
           console.error(`Error ak cargar QT: ${response.statusText}`);
