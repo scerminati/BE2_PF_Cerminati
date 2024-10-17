@@ -124,7 +124,7 @@ img {
 /* Estilos para productos en cuadrícula */
 .productosCSS {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
 }
 
 /* Estilos para listado de productos */

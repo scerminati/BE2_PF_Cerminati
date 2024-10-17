@@ -14,9 +14,7 @@ export default class Cart {
   getCart = async (id) => {
     try {
       let cart = await cartsModel.findOne({ _id: id });
-      if (cart) {
-        return await this.populateCart(cart);
-      } else return null;
+      return cart ? await this.populateCart(cart) : null;
     } catch (error) {
       console.error(error);
       throw error;
@@ -76,9 +74,7 @@ export default class Cart {
           new: true,
         }
       );
-      if (cartUpdated) {
-        return await this.populateCart(cartUpdated);
-      } else return null;
+      return cartUpdated ? await this.populateCart(cartUpdated) : null;
     } catch (error) {
       console.error(error);
       throw error;

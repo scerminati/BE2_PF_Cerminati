@@ -12,7 +12,8 @@ export default class Product {
 
   getProduct = async (id) => {
     try {
-      return await productsModel.findOne({ _id: id });
+      const product = await productsModel.findOne({ _id: id });
+      return product ? product : null;
     } catch (error) {
       console.error(error);
       throw error;
@@ -54,9 +55,14 @@ export default class Product {
       updateData.status = false;
     }
     try {
-      return await productsModel.findOneAndUpdate({ _id: id }, updateData, {
-        new: true,
-      });
+      const product = await productsModel.findOneAndUpdate(
+        { _id: id },
+        updateData,
+        {
+          new: true,
+        }
+      );
+      return product ? product : null;
     } catch (error) {
       console.error(error);
       throw error;
@@ -65,9 +71,10 @@ export default class Product {
 
   deleteProduct = async (id) => {
     try {
-      return await productsModel.findOneAndDelete({
+      const product = await productsModel.findOneAndDelete({
         _id: id,
       });
+      return product ? product : null;
     } catch (error) {
       console.error(error);
       throw error;
