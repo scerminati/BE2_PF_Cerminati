@@ -13,7 +13,7 @@ const cartService = new Cart();
 export const getLoggedUserController = async (req, res) => {
   const userId = req.user._id;
   if (!userId) {
-    res.status(400).send({ msg: "Datos de sesión incompletos" });
+    return res.status(400).send({ msg: "Datos de sesión incompletos" });
   }
 
   try {
@@ -42,7 +42,7 @@ export const registerUserController = async (req, res) => {
   const { first_name, last_name, password, email, age } = req.body;
 
   if (!first_name || !last_name || !password || !email || !age) {
-    res.status(400).send({ msg: "Datos de registro incompletos" });
+    return res.status(400).send({ msg: "Datos de registro incompletos" });
   }
   try {
     let user = await userService.getUser(email);
@@ -89,22 +89,16 @@ export const loginUserController = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).send({ msg: "Datos de sesión incompletos" });
+    return res.status(400).send({ msg: "Datos de sesión incompletos" });
   }
 
   try {
-    const user = await userService.getUser(email);
+    const user = await userService.loginUser(email, password);
 
     // Verificar si el usuario existe
     if (!user) {
-      console.log("El usuario no existe");
-      return res.status(404).send({ msg: "El usuario no existe" });
-    }
-
-    // Validar la contraseña usando el servicio
-    if (!(await userService.validatePassword(user, password))) {
-      console.log("Contraseña incorrecta");
-      return res.status(401).send({ msg: "Contraseña incorrecta" });
+      console.log("Usuario o contraseña erróneos");
+      return res.status(404).send({ msg: "Usuario o contraseña erróneos" });
     }
 
     // Si la validación es exitosa, genera el JWT y redirige
@@ -128,7 +122,7 @@ export const logoutUserController = async (req, res) => {
 export const checkoutCartController = async (req, res) => {
   const userId = req.user._id;
   if (!userId) {
-    res.status(400).send({ msg: "Datos de sesión incompletos" });
+    return res.status(400).send({ msg: "Datos de sesión incompletos" });
   }
 
   try {

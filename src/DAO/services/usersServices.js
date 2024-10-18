@@ -24,6 +24,17 @@ export default class User {
     }
   };
 
+  loginUser = async (email, pass) => {
+    try {
+      let user = await this.getUser(email);
+
+      return this.validatePassword(user, pass) ? new UserDTO(user) : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   createUser = async (info) => {
     try {
       info.password = await this.createHash(info.password);
@@ -47,14 +58,6 @@ export default class User {
       console.error(error);
       throw error;
     }
-  };
-
-  createHash = async (password) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-  };
-
-  validatePassword = async (user, password) => {
-    return bcrypt.compareSync(password, user.password);
   };
 
   makeAdmin = async (userId) => {
@@ -87,5 +90,13 @@ export default class User {
       console.error(error);
       throw error;
     }
+  };
+
+  createHash = async (password) => {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+  };
+
+  validatePassword = async (user, password) => {
+    return bcrypt.compareSync(password, user.password);
   };
 }
