@@ -133,7 +133,7 @@ export const checkoutCartController = async (req, res) => {
 
     // Crea un nuevo carrito
     let newCart = await cartService.createCart();
-    await userService.updateUserCart(userId, newCart._id);
+    let userModified = await userService.updateUserCart(userId, newCart._id);
 
     // Responder al cliente con un mensaje de éxito
     res.status(200).send({ msg: "Compra realizada exitosamente" });
