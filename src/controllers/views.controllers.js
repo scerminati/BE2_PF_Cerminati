@@ -116,7 +116,7 @@ export const viewsCartController = async (req, res) => {
 
 export const viewsRTPController = async (req, res) => {
   try {
-    const products = await productsService.paginateProducts(null, null);
+    const products = await productsService.paginateProducts(null, null );
     res.render("admin/realtimeproducts", {
       products,
     });
