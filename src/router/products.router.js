@@ -14,25 +14,25 @@ import { isAuthenticated, isAdmin, navigate } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", navigate, getAllProductsController);
-router.get("/:pid", navigate, getProductController);
+router.get("/", /*navigate,*/ getAllProductsController);
+router.get("/:pid",/* navigate,*/ getProductController);
 
 router.post(
   "/",
-  isAuthenticated,
-  isAdmin,
+ /*isAuthenticated,
+  isAdmin,*/
   uploader.single("thumbnail"),
   createProductController
 );
 
 router.put(
   "/:pid",
-  isAuthenticated,
-  isAdmin,
+ /* isAuthenticated,
+  isAdmin,*/
   uploader.single("thumbnail"),
   editProductController
 );
 
-router.delete("/:pid", isAuthenticated, isAdmin, deleteProductController);
+router.delete("/:pid", /*isAuthenticated, isAdmin,*/ deleteProductController);
 
 export default router;

@@ -52,4 +52,36 @@ export default class User {
   validatePassword = async (user, password) => {
     return bcrypt.compareSync(password, user.password);
   };
+
+  makeAdmin = async (userId) => {
+    try {
+      let user = await userModel.findOneAndUpdate(
+        { _id: userId },
+        { role: "admin" },
+        {
+          new: true,
+        }
+      );
+      return user ? user : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  makeUser = async (userId) => {
+    try {
+      let user = await userModel.findOneAndUpdate(
+        { _id: userId },
+        { role: "user" },
+        {
+          new: true,
+        }
+      );
+      return user ? user : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 }

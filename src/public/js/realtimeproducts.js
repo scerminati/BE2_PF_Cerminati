@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.on("Product Update", (updatedProduct) => {
     //console.log("Producto Actualizado:", updatedProduct);
 
-    const existingProduct = document.getElementById(updatedProduct._id);
+    const existingProduct = document.getElementById(updatedProduct.id);
 
     if (existingProduct) {
       // Actualizar detalles del producto en la lista
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Agregar nuevo producto a la lista
       const newProductItem = document.createElement("div");
 
-      newProductItem.setAttribute("id", updatedProduct._id);
+      newProductItem.setAttribute("id", updatedProduct.id);
       newProductItem.classList.add("productoBox");
       newProductItem.innerHTML = innerHTMLtext(updatedProduct);
       productList.appendChild(newProductItem);
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
   socket.on("Product Deleted", (deletedProduct) => {
     //console.log("Producto Eliminado:", deletedProduct);
 
-    const existingProduct = document.getElementById(deletedProduct._id);
+    const existingProduct = document.getElementById(deletedProduct.id);
     if (existingProduct) {
       existingProduct.remove();
     }
@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      let { payload: newProduct } = await response.json();
+      const newProduct = await response.json();
 
       // Emitir evento de actualización de producto a través de Socket.io
-      socket.emit("Product Update", newProduct);
+      socket.emit("Product Update", newProduct.newProduct);
       tostada("Producto nuevo añadido");
 
       cancelOp();
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        let { payload: deletedProduct } = await response.json();
+        const deletedProduct = await response.json();
 
         // Emitir evento de eliminación de producto a través de Socket.io
         socket.emit("Product Deleted", deletedProduct.productoAEliminar);
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         let { payload: productData } = await response.json();
-
+        console.log(productData);
         // Mostrar los datos del producto en el formulario para editar
         titleInput.value = productData.title;
         descriptionInput.value = productData.description;
@@ -207,10 +207,10 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      let { payload: updatedProduct } = await response.json();
+      const updatedProduct = await response.json();
 
       // Emitir evento de actualización de producto a través de Socket.io
-      socket.emit("Product Update", updatedProduct);
+      socket.emit("Product Update", updatedProduct.productoModificado);
       tostada("Producto actualizado");
 
       cancelOp();
@@ -249,12 +249,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <button
           type="button"
           class="btn-modify flex4"
-          data-product-id="${product._id}"
+          data-product-id="${product.id}"
         >Modificar</button>
         <button
           type="button"
           class="btn-delete flex5"
-          data-product-id="${product._id}"
+          data-product-id="${product.id}"
         >Eliminar</button>
       `;
   }

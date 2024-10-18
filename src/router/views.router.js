@@ -5,7 +5,6 @@ import {
   viewsProductController,
   viewsCartController,
   viewsRTPController,
-  viewsRTCController,
   viewsRTUController,
   viewsRTTController,
   viewsLoginController,
@@ -28,9 +27,11 @@ router.get("/products/:pid", navigate, viewsProductController);
 
 router.get("/carts/:cid", isAuthenticated, isUserCart, viewsCartController);
 
-router.get("/realtimeproducts", isAuthenticated, isAdmin, viewsRTPController);
-router.get("/realtimecarts", isAuthenticated, isAdmin, viewsRTCController);
-router.get("/realtimeusers", isAuthenticated, isAdmin, viewsRTUController);
+router.get(
+  "/realtimeproducts",
+  /*isAuthenticated, isAdmin,*/ viewsRTPController
+);
+router.get("/realtimeusers", /*isAuthenticated, isAdmin,*/ viewsRTUController);
 router.get("/realtimeticket", isAuthenticated, isAdmin, viewsRTTController);
 
 router.get("/login", isNotAuthenticated, viewsLoginController);

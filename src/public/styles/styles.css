@@ -188,6 +188,22 @@ img {
   text-align: center;
 }
 
+.flex1u {
+  flex-basis: 30%;
+}
+
+.flex2u {
+  flex-basis: 20%;
+}
+
+.flex3u {
+  flex-basis: 10%;
+}
+
+.flex4u {
+  flex-basis: 10%;
+}
+
 /* Estilos para contenedores flexibles */
 .flexDiv {
   display: flex;

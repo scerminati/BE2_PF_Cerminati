@@ -2,6 +2,8 @@ import Session from "../DAO/services/sessionsServices.js";
 import User from "../DAO/services/usersServices.js";
 import Cart from "../DAO/services/cartsServices.js";
 
+import { socketServer } from "../app.js";
+
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
 const sessionService = new Session();
@@ -22,7 +24,7 @@ export const getLoggedUserController = async (req, res) => {
     }
 
     // Envía la información del usuario como respuesta
-    res.send( {
+    res.send({
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
@@ -39,7 +41,6 @@ export const getLoggedUserController = async (req, res) => {
 export const registerUserController = async (req, res) => {
   const { first_name, last_name, password, email, age } = req.body;
 
-
   if (!first_name || !last_name || !password || !email || !age) {
     res.status(400).send({ msg: "Datos de registro incompletos" });
   }
@@ -53,7 +54,7 @@ export const registerUserController = async (req, res) => {
     }
 
     let newCart = await cartService.createCart();
-    console.log(newCart)
+    console.log(newCart);
 
     const newUser = {
       first_name,
@@ -71,7 +72,7 @@ export const registerUserController = async (req, res) => {
       createdUser,
       `y nuevo carrito creado para el usuario con id ${newCart._id}`
     );
-
+    socketServer.emit("UserChange", createdUser);
     // Set a JWT cookie
     res.cookie("jwt", generateToken(createdUser), {
       httpOnly: true,
@@ -86,7 +87,6 @@ export const registerUserController = async (req, res) => {
 
 export const loginUserController = async (req, res) => {
   const { email, password } = req.body;
-
 
   if (!email || !password) {
     res.status(400).send({ msg: "Datos de sesión incompletos" });

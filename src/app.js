@@ -16,7 +16,7 @@ import cartRouter from "./router/cart.router.js";
 import productsRouter from "./router/products.router.js";
 import sessionRouter from "./router/session.router.js";
 import viewsRouter from "./router/views.router.js";
-import usersRouter from "./router/users.routerold.js";
+import usersRouter from "./router/users.router.js";
 
 import { Server } from "socket.io";
 import { helpers } from "./utils/main/handlebarsHelpers.js";

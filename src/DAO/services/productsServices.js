@@ -3,7 +3,7 @@ import productsModel from "../models/products.model.js";
 export default class Product {
   getAllProducts = async () => {
     try {
-      return await productsModel.find({});
+      return await productsModel.find({}).sort({ id: 1 });
     } catch (error) {
       console.error(error);
       throw error;

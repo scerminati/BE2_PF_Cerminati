@@ -1,12 +1,6 @@
-/*Todo los req y los res van acá, y llamo a servicios que manejan todo mi mongoose poronga, 
-1. obtener todos los usuarios
-2. quiero edición de permisos
-3. borrar usuarios -> limpiar carritos
-
-
-*/
-
 import User from "../DAO/services/usersServices.js";
+
+import { socketServer } from "../app.js";
 
 const userService = new User();
 
@@ -33,5 +27,46 @@ export const getAllUsersController = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "Error al obtener los carritos." });
+  }
+};
+
+export const makeAdmin = async (req, res) => {
+  const idUser = req.params.uid;
+
+  try {
+    const newAdmin = await userService.makeAdmin(idUser);
+
+    if (newAdmin) {
+      socketServer.emit("UserChange", newAdmin);
+      res.status(201).json({
+        msg: `El usuario ${newAdmin.email} es ahora administrado`,
+        payload: newAdmin,
+      });
+    } else {
+      res.status(404).json({ msg: "No se encuentra el usuario" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error cambiar de rol." });
+  }
+};
+export const makeUser = async (req, res) => {
+  const idUser = req.params.uid;
+
+  try {
+    const newUser = await userService.makeUser(idUser);
+
+    if (newUser) {
+      socketServer.emit("UserChange", newUser);
+      res.status(201).json({
+        msg: `El usuario ${newUser.email} es ahora usuario`,
+        payload: newUser,
+      });
+    } else {
+      res.status(404).json({ msg: "No se encuentra el usuario" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error cambiar de rol." });
   }
 };

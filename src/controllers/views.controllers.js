@@ -1,9 +1,11 @@
 import Product from "../DAO/services/productsServices.js";
 import Cart from "../DAO/services/cartsServices.js";
+import User from "../DAO/services/usersServices.js";
 import { getLoggedUserController } from "./sessions.controller.js";
 
 const productsService = new Product();
 const cartService = new Cart();
+const usersService = new User();
 
 export const viewsPaginateController = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -116,7 +118,8 @@ export const viewsCartController = async (req, res) => {
 
 export const viewsRTPController = async (req, res) => {
   try {
-    const products = await productsService.paginateProducts(null, null );
+    const products = await productsService.getAllProducts();
+    console.log(products);
     res.render("admin/realtimeproducts", {
       products,
     });
@@ -125,8 +128,19 @@ export const viewsRTPController = async (req, res) => {
     res.status(500).json({ msg: "Error al cargar los productos." });
   }
 };
-export const viewsRTCController = async (req, res) => {};
-export const viewsRTUController = async (req, res) => {};
+
+export const viewsRTUController = async (req, res) => {
+  try {
+    const users = await usersService.getAllUsers();
+    console.log(users);
+    res.render("admin/realtimeusers", {
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "Error al cargar los productos." });
+  }
+};
 export const viewsRTTController = async (req, res) => {};
 
 export const viewsLoginController = async (req, res) => {
