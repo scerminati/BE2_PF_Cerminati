@@ -2,6 +2,16 @@ import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
 export default class User {
+  getAllUsers = async () => {
+    try {
+      let user = await userModel.find({});
+      return user ? user : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   getUser = async (email) => {
     try {
       let user = await userModel.findOne({ email });

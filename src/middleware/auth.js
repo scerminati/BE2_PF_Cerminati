@@ -20,7 +20,6 @@ export const passportCall = (strategy) => {
   };
 };
 
-
 export const isNotAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
@@ -39,7 +38,6 @@ export const isNotAuthenticated = (req, res, next) => {
 // Middleware para verificar si el usuario está autenticado
 export const isAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
-    
     if (err) {
       return next(err);
     }
@@ -47,9 +45,24 @@ export const isAuthenticated = (req, res, next) => {
       // Si el usuario no está autenticado, redirige al login
       return res.redirect("/login");
     }
-  
+
     // Si el usuario está autenticado, continúa
     req.user = user;
+    next();
+  })(req, res, next);
+};
+
+export const navigate = (req, res, next) => {
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (user) {
+      req.user = user;
+    } else {
+      req.user = "";
+    }
+
     next();
   })(req, res, next);
 };

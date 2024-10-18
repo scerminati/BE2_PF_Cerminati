@@ -117,9 +117,8 @@ export const editProductInCartController = async (req, res) => {
     }
 
     if (productoEnCarrito) {
-      if (productToAdd.stock + productoEnCarrito.quantity >= quantity) {
-        productToAdd.stock =
-          productoEnCarrito.quantity + productToAdd.stock - quantity;
+      if (productToAdd.stock >= quantity) {
+        productToAdd.stock -= quantity;
       } else {
         return res
           .status(404)
@@ -135,17 +134,33 @@ export const editProductInCartController = async (req, res) => {
       }
     }
 
-    let productAdded = await productService.editStock(
-      idProducto,
-      productToAdd.stock
-    );
-    socketServer.emit("Product Update", productAdded);
+    // let productAdded = await productService.editStock(
+    //   idProducto,
+    //   productToAdd.stock
+    // );
+    if (productToAdd.stock <= 0) {
+      productToAdd.status = false;
+    }
+    socketServer.emit("Product Update", productToAdd);
+
+    // if (productoEnCarrito) {
+    //   productToAdd.stock < quantity &&
+    //     res
+    //       .status(404)
+    //       .json({ msg: "No hay suficiente stock de este producto." });
+    // } else {
+    //   productToAdd.stock < quantity &&
+    //     res
+    //       .status(404)
+    //       .json({ msg: "No hay suficiente stock de este producto." });
+    // }
 
     let cartUpdated = await cartService.editCart(
       idCarrito,
       idProducto,
       quantity
     );
+
     socketServer.emit("Cart Update", cartUpdated);
 
     res.status(202).json({
@@ -167,20 +182,20 @@ export const emptyCartController = async (req, res) => {
       res.status(404).json({ msg: "No se encuentra el carrito con dicho id" });
     }
 
-    // Reajustar el stock de los productos en el carrito
-    for (const item of cartToEmpty.products) {
-      let idProd = item.product._id;
-      let productoEnCarrito = await productService.getProduct(idProd);
-      if (productoEnCarrito) {
-        productoEnCarrito.stock += item.quantity;
-        productoEnCarrito = await productService.editStock(
-          idProd,
-          productoEnCarrito.stock
-        );
-        socketServer.emit("Product Update", productoEnCarrito);
-        console.log(productoEnCarrito, "nuevo stock");
-      }
-    }
+    // // Reajustar el stock de los productos en el carrito
+    // for (const item of cartToEmpty.products) {
+    //   let idProd = item.product._id;
+    //   let productoEnCarrito = await productService.getProduct(idProd);
+    //   if (productoEnCarrito) {
+    //     productoEnCarrito.stock += item.quantity;
+    //     productoEnCarrito = await productService.editStock(
+    //       idProd,
+    //       productoEnCarrito.stock
+    //     );
+    //     socketServer.emit("Product Update", productoEnCarrito);
+    //     console.log(productoEnCarrito, "nuevo stock");
+    //   }
+    // }
 
     const emptyCart = await cartService.getCart(idCarrito);
     socketServer.emit("Cart Update", emptyCart);
@@ -209,17 +224,17 @@ export const deleteProductInCartController = async (req, res) => {
         .json({ msg: "No se encuentra el producto dentro del carrito" });
     }
 
-    // Encontrar el producto a eliminar en el carrito
-    let productoEnCarrito = cartToModify.products.find(
-      (product) => product.product._id.toString() === idProduct
-    );
+    // // Encontrar el producto a eliminar en el carrito
+    // let productoEnCarrito = cartToModify.products.find(
+    //   (product) => product.product._id.toString() === idProduct
+    // );
 
-    // Actualizar el stock del producto
-    let producto = await productService.getProduct(idProduct);
-    producto.stock += productoEnCarrito.quantity;
+    // // Actualizar el stock del producto
+    // let producto = await productService.getProduct(idProduct);
+    // producto.stock += productoEnCarrito.quantity;
 
-    productService.editStock(idProduct, producto.stock);
-    socketServer.emit("Product Update", producto);
+    // productService.editStock(idProduct, producto.stock);
+    // socketServer.emit("Product Update", producto);
 
     let cartModified = await cartService.getCart(idCarrito);
 

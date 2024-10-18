@@ -12,9 +12,9 @@ import { passportCall } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/current", passportCall("jwt"), getLoggedUserController);
 
-router.post("/register", registerUserController);
+
+router.post("/register", registerUserController);router.get("/current", passportCall("jwt"), getLoggedUserController);
 
 router.post("/login", loginUserController);
 router.post("/logout", logoutUserController);

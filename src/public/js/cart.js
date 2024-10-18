@@ -100,18 +100,16 @@ document.addEventListener("DOMContentLoaded", async function () {
               cart.products.forEach((product) => {
                 const productElement = document.createElement("div");
                 productElement.classList.add("productoBox");
-                productElement.innerHTML = `<h3 class="flex1c">${
-                  product.product.title
-                }</h3>
+                productElement.innerHTML = `<h3 class="flex1c">${product.product.title}</h3>
             <p class="flex2c">Precio: $${product.product.price}</p>
             <p class="flex2c">Cantidad: ${product.quantity}</p>
-            <p class="flex2c">Stock: ${product.product.stock}</p>
+            <p class="flex2c">Stock Disponible:  ${product.product.stock}</p>
 
             <input
               type="number"
               name="quantity"
               min="1"
-              max="${product.product.stock + product.quantity}"
+              max="${product.product.stock}"
               value="${product.quantity}"
               class="flex3c"
               data-product-id="${product.product._id}"
@@ -131,7 +129,8 @@ document.addEventListener("DOMContentLoaded", async function () {
               if (totalPriceElement) {
                 const totalPrice = cart.products
                   .reduce(
-                    (acc, product) => acc + product.product.price * product.quantity,
+                    (acc, product) =>
+                      acc + product.product.price * product.quantity,
                     0
                   )
                   .toFixed(2);

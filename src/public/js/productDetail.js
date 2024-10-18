@@ -34,9 +34,12 @@ const isProductInCart = async (cartId, productId) => {
     const response = await fetch(`/api/carts/${cartId}`);
     if (response.ok) {
       let { payload: cart } = await response.json();
-      return cart.products.some(
-        (product) => product._id.toString() === productId
+      console.log(cart.products);
+      let result = cart.products.some(
+        (product) => product.product._id.toString() === productId
       );
+      console.log(result);
+      return result;
     } else {
       throw new Error("No se pudo obtener el carrito.");
     }
@@ -81,26 +84,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   } else {
     cartLink.href = `/login`;
   }
-
-  //Función para manipulación de cart count.
-  const getQT = async () => {
-    const cartId = await getCartId();
-    if (cartId) {
-      try {
-        const response = await fetch(`/api/carts/${cartId}/QT`);
-        if (response.ok) {
-          let { payload: data } = await response.json();
-          cartCount.innerText = data.totalProductos;
-        } else {
-          console.error(`Error ak cargar QT: ${response.statusText}`);
-        }
-      } catch (error) {
-        console.error("Error:", error.message);
-      }
-    } else {
-      cartCount.innerText = 0;
-    }
-  };
 
   const cartCount = document.getElementById("cartCount");
   if (cartCount) {

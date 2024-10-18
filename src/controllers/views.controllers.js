@@ -1,5 +1,6 @@
 import Product from "../DAO/services/productsServices.js";
 import Cart from "../DAO/services/cartsServices.js";
+import { getLoggedUserController } from "./sessions.controller.js";
 
 const productsService = new Product();
 const cartService = new Cart();
@@ -52,9 +53,14 @@ export const viewsPaginateController = async (req, res) => {
       : "";
     result.isValid = !(page <= 0 || page > result.totalPages);
 
+    let prodStock = await getSessionStock(req, result.docs);
+
+    if (prodStock) {
+      result.docs = prodStock;
+    }
+
     res.render("index", result);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ msg: "Error al cargar los productos." });
   }
 };
@@ -83,7 +89,7 @@ export const viewsCartController = async (req, res) => {
   const cartId = req.params.cid;
   try {
     let carritoEncontrado = await cartService.getCart(cartId);
-    console.log(carritoEncontrado.products);
+    
     if (!carritoEncontrado) {
       return res
         .status(404)
@@ -95,8 +101,6 @@ export const viewsCartController = async (req, res) => {
     }, 0);
 
     totalPrice = totalPrice.toFixed(2);
-
-
 
     res.render("users/cart", {
       products: carritoEncontrado.products,
@@ -132,3 +136,41 @@ export const viewsRegisterController = async (req, res) => {
 export const viewsProfileController = async (req, res) => {
   res.render("users/profile", { user: req.user });
 };
+
+async function getSessionStock(req, prod) {
+  const cartId = req.user.cart;
+  let cart;
+
+  try {
+    if (cartId) {
+      cart = await cartService.getCart(cartId);
+
+      if (!cart) {
+        // En lugar de enviar una respuesta, lanza un error o retorna un estado
+        throw new Error("Carrito no encontrado");
+      }
+
+      const cartProducts = cart.products;
+
+      prod.forEach((product) => {
+        const cartProduct = cartProducts.find(
+          (cartItem) => cartItem.product._id.toString() === product._id.toString()
+        );
+
+        if (cartProduct) {
+          const newStock = product.stock - cartProduct.quantity;
+          product.stock = newStock >= 0 ? newStock : 0;
+          if (product.stock === 0) {
+            product.status = false;
+          }
+        }
+      });
+      return prod; 
+    }
+    return false; 
+  } catch (error) {
+    console.error("Error al obtener el carrito o actualizar el stock:", error);
+    return false; 
+  }
+}
+

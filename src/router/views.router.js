@@ -17,11 +17,16 @@ import {
   isAdmin,
   isAuthenticated,
   isNotAuthenticated,
+  navigate,
 } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", viewsPaginateController);
+router.get(
+  "/",
+  navigate,
+  viewsPaginateController
+);
 router.get("/products/:pid", viewsProductController);
 router.get("/carts/:cid", isAuthenticated, viewsCartController);
 

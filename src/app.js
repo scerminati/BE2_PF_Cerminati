@@ -21,6 +21,9 @@ import usersRouter from "./router/users.routerold.js";
 import { Server } from "socket.io";
 import { helpers } from "./utils/main/handlebarsHelpers.js";
 
+import nodemailer from "nodemailer";
+import { body, mailCofig } from "./utils/session/mailUtil.js";
+
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -86,6 +89,14 @@ app.set("view engine", "hbs");
 
 //Estáticos
 app.use(express.static(path.join(__dirname, "../../public")));
+
+//Mensajería de tickets
+const transport = nodemailer.createTransport(mailCofig);
+
+app.get("/mail", async (req, res) => {
+  let result = await transport.sendMail(body);
+  res.send({ msg: "éxito" });
+});
 
 //Configuración Socket.io
 const httpServer = app.listen(PORT, () => {

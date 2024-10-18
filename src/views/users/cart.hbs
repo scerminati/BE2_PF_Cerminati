@@ -7,13 +7,14 @@
             <h3 class="flex1c">{{this.product.title}}</h3>
             <p class="flex2c">Precio: ${{this.product.price}}</p>
             <p class="flex2c">Cantidad: {{this.quantity}}</p>
-            <p class="flex2c">Stock: {{this.product.stock}}</p>
+            <p class="flex2c">Stock Disponible:
+              {{this.product.stock}}</p>
 
             <input
               type="number"
               name="quantity"
               min="1"
-              max="{{add this.product.stock this.quantity}}"
+              max="{{this.product.stock}}"
               value="{{this.quantity}}"
               class="flex3c"
               data-product-id="{{this.product._id}}"
