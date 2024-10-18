@@ -17,23 +17,25 @@ export const viewsPaginateController = async (req, res) => {
     filter.category = category;
   }
 
-  let sortOrder;
+  let sortOrder, sortValue;
   let result;
 
+  if (sort) {
+    sortOrder = sort === "desc" ? -1 : 1;
+    sortValue = {
+      price: sortOrder,
+    };
+  } else {
+    sortValue = {
+      id: 1,
+    };
+  }
   try {
-    if (sort) {
-      sortOrder = sort === "desc" ? -1 : 1;
-      result = await productsService.paginateProducts(filter, {
-        page,
-        limit,
-        sort: { price: sortOrder },
-      });
-    } else {
-      result = await productsService.paginateProducts(filter, {
-        page,
-        limit,
-      });
-    }
+    result = await productsService.paginateProducts(filter, {
+      page,
+      limit,
+      sort: sortValue,
+    });
 
     const allCategories = await productsService.categoryProducts();
 
@@ -89,7 +91,7 @@ export const viewsCartController = async (req, res) => {
   const cartId = req.params.cid;
   try {
     let carritoEncontrado = await cartService.getCart(cartId);
-    
+
     if (!carritoEncontrado) {
       return res
         .status(404)
@@ -114,7 +116,7 @@ export const viewsCartController = async (req, res) => {
 
 export const viewsRTPController = async (req, res) => {
   try {
-    const products = await productsService.paginateProducts(null, null, 1);
+    const products = await productsService.paginateProducts(null, null);
     res.render("admin/realtimeproducts", {
       products,
     });
@@ -154,7 +156,8 @@ async function getSessionStock(req, prod) {
 
       prod.forEach((product) => {
         const cartProduct = cartProducts.find(
-          (cartItem) => cartItem.product._id.toString() === product._id.toString()
+          (cartItem) =>
+            cartItem.product._id.toString() === product._id.toString()
         );
 
         if (cartProduct) {
@@ -165,12 +168,11 @@ async function getSessionStock(req, prod) {
           }
         }
       });
-      return prod; 
+      return prod;
     }
-    return false; 
+    return false;
   } catch (error) {
     console.error("Error al obtener el carrito o actualizar el stock:", error);
-    return false; 
+    return false;
   }
 }
-

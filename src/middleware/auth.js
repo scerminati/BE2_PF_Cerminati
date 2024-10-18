@@ -86,7 +86,8 @@ export const isUserCart = (req, res, next) => {
   if (!req.user) {
     return res.redirect("/login"); // Redirige al login si no está autenticado
   }
-  if (req.user.cartId !== cid) {
+
+  if (req.user.cart.toString() !== cid) {
     return res.status(403).send({ error: "Access Denied to this Cart" });
   }
   next();

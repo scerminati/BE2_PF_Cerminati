@@ -15,6 +15,7 @@ import {
 
 import {
   isAdmin,
+  isUserCart,
   isAuthenticated,
   isNotAuthenticated,
   navigate,
@@ -22,13 +23,10 @@ import {
 
 const router = express.Router();
 
-router.get(
-  "/",
-  navigate,
-  viewsPaginateController
-);
-router.get("/products/:pid", viewsProductController);
-router.get("/carts/:cid", isAuthenticated, viewsCartController);
+router.get("/", navigate, viewsPaginateController);
+router.get("/products/:pid", navigate, viewsProductController);
+
+router.get("/carts/:cid", isAuthenticated, isUserCart, viewsCartController);
 
 router.get("/realtimeproducts", isAuthenticated, isAdmin, viewsRTPController);
 router.get("/realtimecarts", isAuthenticated, isAdmin, viewsRTCController);

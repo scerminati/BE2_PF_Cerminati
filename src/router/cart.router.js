@@ -10,19 +10,29 @@ import {
   deleteProductInCartController,
 } from "../controllers/carts.controllers.js";
 
-import { isAuthenticated, isUserCart } from "../middleware/auth.js";
+import { isAuthenticated, isUserCart, isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", getAllCartsController);
-router.get("/:cid", getCartController);
-router.get("/:cid/QT", getCartQTController);
+router.get("/", isAuthenticated, isAdmin, getAllCartsController);
+router.get("/:cid", isAuthenticated, isUserCart, getCartController);
+router.get("/:cid/QT", isAuthenticated, isUserCart, getCartQTController);
 
-router.post("/", createCartController);
+router.post("/", isAuthenticated, createCartController);
 
-router.put("/:cid/product/:pid", editProductInCartController);
+router.put(
+  "/:cid/product/:pid",
+  isAuthenticated,
+  isUserCart,
+  editProductInCartController
+);
 
-router.delete("/:cid", emptyCartController);
-router.delete("/:cid/product/:pid", deleteProductInCartController);
+router.delete("/:cid", isAuthenticated, isUserCart, emptyCartController);
+router.delete(
+  "/:cid/product/:pid",
+  isAuthenticated,
+  isUserCart,
+  deleteProductInCartController
+);
 
 export default router;

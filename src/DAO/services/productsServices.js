@@ -70,7 +70,7 @@ export default class Product {
   };
 
   editStock = async (id, stock) => {
-    let status
+    let status;
     if (stock > 0) {
       status = true;
     } else {
@@ -79,7 +79,7 @@ export default class Product {
     try {
       const product = await productsModel.findOneAndUpdate(
         { _id: id },
-        {stock, status},
+        { stock, status },
         {
           new: true,
         }
@@ -103,16 +103,12 @@ export default class Product {
     }
   };
 
-  paginateProducts = async (filter, values, sort) => {
+  paginateProducts = async (filter, values) => {
     try {
       let products;
-      if (!filter && !values) {
-        products = await productsModel.find({}).sort({id: 1});
-      } else if (sort) {
-        products = await productsModel.paginate(filter, values, sort);
-      } else {
-        products = await productsModel.paginate(filter, values);
-      }
+
+      products = await productsModel.paginate(filter, values);
+
       return products ? products : null;
     } catch (error) {
       console.error(error);

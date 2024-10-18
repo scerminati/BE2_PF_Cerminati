@@ -10,15 +10,29 @@ import {
   deleteProductController,
 } from "../controllers/products.controllers.js";
 
+import { isAuthenticated, isAdmin, navigate } from "../middleware/auth.js";
+
 const router = express.Router();
 
-router.get("/", getAllProductsController);
-router.get("/:pid", getProductController);
+router.get("/", navigate, getAllProductsController);
+router.get("/:pid", navigate, getProductController);
 
-router.post("/", uploader.single("thumbnail"), createProductController);
+router.post(
+  "/",
+  isAuthenticated,
+  isAdmin,
+  uploader.single("thumbnail"),
+  createProductController
+);
 
-router.put("/:pid", uploader.single("thumbnail"), editProductController);
+router.put(
+  "/:pid",
+  isAuthenticated,
+  isAdmin,
+  uploader.single("thumbnail"),
+  editProductController
+);
 
-router.delete("/:pid", deleteProductController);
+router.delete("/:pid", isAuthenticated, isAdmin, deleteProductController);
 
 export default router;
