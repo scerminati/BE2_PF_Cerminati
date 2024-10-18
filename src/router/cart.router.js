@@ -14,7 +14,7 @@ import { isAuthenticated, isUserCart, isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", /*isAuthenticated, isAdmin,*/ getAllCartsController);
+router.get("/", isAuthenticated, isAdmin, getAllCartsController);
 router.get("/:cid", isAuthenticated, isUserCart, getCartController);
 router.get("/:cid/QT", isAuthenticated, isUserCart, getCartQTController);
 

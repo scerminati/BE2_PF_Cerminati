@@ -10,9 +10,9 @@ import { isAuthenticated, isAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", /*isAuthenticated, isAdmin,*/ getAllUsersController);
+router.get("/", isAuthenticated, isAdmin, getAllUsersController);
 
-router.put("/:uid/makeAdmin", /*isAuthenticated, isAdmin,*/ makeAdmin);
-router.put("/:uid/makeUser", /*isAuthenticated, isAdmin,*/ makeUser);
+router.put("/:uid/makeAdmin", isAuthenticated, isAdmin, makeAdmin);
+router.put("/:uid/makeUser", isAuthenticated, isAdmin, makeUser);
 
 export default router;
