@@ -71,7 +71,7 @@ export const createProductController = async (req, res) => {
   }
 
   try {
-    const newProduct = {
+    let newProduct = {
       id: await productService.nextId(),
       title,
       description,
@@ -82,7 +82,7 @@ export const createProductController = async (req, res) => {
       thumbnail,
     };
 
-    await productService.createProduct(newProduct);
+    newProduct = await productService.createProduct(newProduct);
     socketServer.emit("Product Update", newProduct);
     res.status(201).json({
       msg: `Producto agregado exitosamente con id ${newProduct._id}`,
