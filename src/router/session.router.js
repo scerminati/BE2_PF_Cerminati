@@ -12,22 +12,16 @@ import {
   isAuthenticated,
   isNotAuthenticated,
   isUserCart,
-  passportCall,
 } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.post("/register", isNotAuthenticated, registerUserController);
-router.get("/current", passportCall("jwt"), getLoggedUserController);
+router.get("/current", isAuthenticated, getLoggedUserController);
 
 router.post("/login", isNotAuthenticated, loginUserController);
 router.post("/logout", isAuthenticated, logoutUserController);
 
-router.post(
-  "/checkout",
-  passportCall("jwt"),
-  isUserCart,
-  checkoutCartController
-);
+router.post("/checkout", isAuthenticated, isUserCart, checkoutCartController);
 
 export default router;

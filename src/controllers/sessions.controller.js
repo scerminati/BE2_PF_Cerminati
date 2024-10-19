@@ -5,35 +5,36 @@ import {
   registerUserService,
 } from "../services/users.services.js";
 
-import { socketServer } from "../app.js";
-
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
-export const getLoggedUserController = async (req, res) => {
+import { emitUserChange } from "../utils/main/socketUtils.js";
+import {
+  BadRequestError,
+  ValidationError,
+} from "../utils/main/errorUtils.js";
+
+export const getLoggedUserController = async (req, res, next) => {
   const userId = req.user._id;
   if (!userId) {
-    return res.status(400).send({ msg: "Datos de sesión incompletos" });
+    return next(new ValidationError("ID usuario inválido."));
   }
 
   try {
     const user = await getCurrentLoggedUserService(userId);
 
-    res.send({
+    res.status(200).send({
       user,
     });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({ error: "Error al obtener los datos del usuario" });
+    next(error);
   }
 };
 
-export const registerUserController = async (req, res) => {
+export const registerUserController = async (req, res, next) => {
   const { first_name, last_name, password, email, age } = req.body;
 
   if (!first_name || !last_name || !password || !email || !age) {
-    return res.status(400).send({ msg: "Datos de registro incompletos" });
+    return next(new BadRequestError("Datos de registro incompletos"));
   }
   try {
     const newUser = {
@@ -50,7 +51,8 @@ export const registerUserController = async (req, res) => {
       createdUser,
       `y nuevo carrito creado para el usuario con id ${newCart._id}`
     );
-    socketServer.emit("UserChange", createdUser);
+
+    emitUserChange(createdUser);
 
     res.cookie("jwt", generateToken(createdUser), {
       httpOnly: true,
@@ -59,16 +61,15 @@ export const registerUserController = async (req, res) => {
 
     res.redirect("/login");
   } catch (error) {
-    console.error(error);
-    return res.status(500).send({ msg: "Error al registrar al usuario" });
+    next(error);
   }
 };
 
-export const loginUserController = async (req, res) => {
+export const loginUserController = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send({ msg: "Datos de sesión incompletos" });
+    return next(new BadRequestError("Datos de sesión incompletos"));
   }
 
   try {
@@ -82,31 +83,26 @@ export const loginUserController = async (req, res) => {
 
     return res.redirect("/profile");
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({ msg: "Error en el servidor al iniciar sesión" });
+    next(error);
   }
 };
 
-export const logoutUserController = async (req, res) => {
+export const logoutUserController = async (req, res, next) => {
   res.clearCookie("jwt");
   res.redirect("/");
 };
 
-export const checkoutCartController = async (req, res) => {
+export const checkoutCartController = async (req, res, next) => {
   const idUser = req.params.uid;
   if (!idUser || idUser.length !== 24) {
-    return res.status(400).json({ msg: "ID usuario inválido." });
+    return next(new ValidationError("ID usuario inválido."));
   }
 
   try {
     const user = await checkoutService(idUser);
-  
-    
+
     return res.status(200).send({ msg: "Compra realizada exitosamente" });
   } catch (error) {
-    console.error(error);
-    return res.status(500).send({ error: "Error al completar la compra" });
+    next(error);
   }
 };

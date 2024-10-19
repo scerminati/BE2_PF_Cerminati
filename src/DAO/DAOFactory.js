@@ -5,6 +5,8 @@ import TicketsMongoDAO from "./Mongo/DAO/TicketsMongoDAO.js";
 
 import { PERSISTENCE } from "../config/persistence.config.js";
 
+import { InternalServerError } from "../utils/main/errorUtils.js";
+
 const persistence = PERSISTENCE;
 
 let ProductsDAO;
@@ -21,7 +23,7 @@ switch (persistence) {
     break;
 
   default:
-    throw new Error("Método de PERSISTENCE no soportada");
+    throw new InternalServerError("Método de PERSISTENCE no soportada");
 }
 
 export { ProductsDAO, CartsDAO, UsersDAO, TicketsDAO };

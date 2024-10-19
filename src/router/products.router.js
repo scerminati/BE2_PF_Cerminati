@@ -19,7 +19,7 @@ router.get("/:pid", navigate, getProductController);
 
 router.post(
   "/",
- isAuthenticated,
+  isAuthenticated,
   isAdmin,
   uploader.single("thumbnail"),
   createProductController

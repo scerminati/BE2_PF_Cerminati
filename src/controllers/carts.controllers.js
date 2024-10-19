@@ -6,11 +6,16 @@ import {
   emptyCartService,
   deleteProductInCartService,
   editProductInCartService,
-} from "../services/carts.service.js";
+} from "../services/cart.services.js";
 
-import { socketServer } from "../app.js";
+import { NotFoundError, ValidationError } from "../utils/main/errorUtils.js";
 
-export const getAllCartsController = async (req, res) => {
+import {
+  emitCartUpdate,
+  emitProductUpdate,
+} from "../utils/main/socketUtils.js";
+
+export const getAllCartsController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);
 
   try {
@@ -24,16 +29,15 @@ export const getAllCartsController = async (req, res) => {
       payload: carts,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al obtener los carritos." });
+    next(error);
   }
 };
 
-export const getCartController = async (req, res) => {
+export const getCartController = async (req, res, next) => {
   const idCarrito = req.params.cid;
 
   if (!idCarrito || idCarrito.length !== 24) {
-    return res.status(400).json({ msg: "ID de carrito inválido." });
+    return next(new ValidationError("ID de carrito inválido."));
   }
   try {
     let cart = await getCartService(idCarrito);
@@ -43,33 +47,29 @@ export const getCartController = async (req, res) => {
       payload: cart,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al obtener el carrito." });
+    next(error);
   }
 };
 
-export const getCartQTController = async (req, res) => {
+export const getCartQTController = async (req, res, next) => {
   const idCarrito = req.params.cid;
 
   try {
     let QT = await getCartQTService(idCarrito);
 
     if (QT === null) {
-      return res
-        .status(404)
-        .json({ msg: "No se encuentra el carrito con dicho id" });
+      return next(new NotFoundError("No se encuentra el carrito con dicho id"));
     }
     return res.status(200).json({
       msg: `Mostrando cantidad de carrito ${idCarrito}`,
       payload: QT,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al obtener el carrito." });
+    next(error);
   }
 };
 
-export const createCartController = async (req, res) => {
+export const createCartController = async (req, res, next) => {
   try {
     const newCart = await createCartService();
     return res.status(201).json({
@@ -77,21 +77,20 @@ export const createCartController = async (req, res) => {
       payload: newCart,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al crear el carrito." });
+    next(error);
   }
 };
 
-export const editProductInCartController = async (req, res) => {
+export const editProductInCartController = async (req, res, next) => {
   const idCarrito = req.params.cid;
   if (!idCarrito || idCarrito.length !== 24) {
-    return res.status(400).json({ msg: "ID de carrito inválido." });
+    return next(new ValidationError("ID de carrito inválido."));
   }
   const idProducto = req.params.pid;
   if (!idProducto || idProducto.length !== 24) {
-    return res.status(400).json({ msg: "ID de producto inválido." });
+    return next(new ValidationError("ID de producto inválido."));
   }
-  let quantity = parseInt(req.body.quantity) || null;
+  let quantity = parseInt(req.body.quantity) > 0 || null;
 
   try {
     const { cartUpdated, productVirtual } = await editProductInCartService(
@@ -100,68 +99,58 @@ export const editProductInCartController = async (req, res) => {
       quantity
     );
 
-    socketServer.emit("Product Update", productVirtual);
+    emitProductUpdate(productVirtual);
 
-    socketServer.emit("Cart Update", cartUpdated);
+    emitCartUpdate(cartUpdated);
 
     return res.status(200).json({
       msg: `El producto ${idProducto} ha sido agregado correctamente al carrito ${idCarrito}`,
       payload: cartUpdated,
     });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ msg: "Error al agregar el producto al carrito." });
+    next(error);
   }
 };
 
-//ver producto virtual
-export const emptyCartController = async (req, res) => {
+export const emptyCartController = async (req, res, next) => {
   const idCarrito = req.params.cid;
   if (!idCarrito || idCarrito.length !== 24) {
-    return res.status(400).json({ msg: "ID de carrito inválido." });
+    return next(new ValidationError("ID de carrito inválido."));
   }
   try {
     const emptyCart = await emptyCartService(idCarrito);
-    socketServer.emit("Cart Update", emptyCart);
+
+    emitCartUpdate(emptyCart);
 
     return res.status(200).json({
       msg: `Eliminados todos los productos del carrito con id ${idCarrito}`,
       payload: emptyCart,
     });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ msg: "Error al borrar productos del carrito." });
+    next(error);
   }
 };
 
-///ver producto virtual
-export const deleteProductInCartController = async (req, res) => {
+export const deleteProductInCartController = async (req, res, next) => {
   const idCarrito = req.params.cid;
   if (!idCarrito || idCarrito.length !== 24) {
-    return res.status(400).json({ msg: "ID de carrito inválido." });
+    return next(new ValidationError("ID de carrito inválido."));
   }
   const idProducto = req.params.pid;
   if (!idProducto || idProducto.length !== 24) {
-    return res.status(400).json({ msg: "ID de producto inválido." });
+    return next(new ValidationError("ID de producto inválido."));
   }
 
   try {
     let cartModified = await deleteProductInCartService(idCarrito);
 
-    socketServer.emit("Cart Update", cartModified);
+    emitCartUpdate(cartModified);
 
     return res.status(200).json({
       msg: `Producto con id ${idProducto} eliminado del carrito con id ${idCarrito}`,
       payload: cartModified,
     });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ msg: "Error al eliminar el producto del carrito." });
+    next(error);
   }
 };

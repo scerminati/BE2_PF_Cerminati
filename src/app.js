@@ -26,6 +26,7 @@ import nodemailer from "nodemailer";
 import { body, mailCofig } from "./utils/session/mailUtil.js";
 
 import dotenv from "dotenv";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config();
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -75,6 +76,9 @@ app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/tickets", ticketsRouter);
 app.use("/", viewsRouter);
+
+//Manejo de errores
+app.use(errorHandler);
 
 // Crear instancia de Handlebars con helpers personalizados
 const hbs = handlebars.create({

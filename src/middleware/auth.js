@@ -1,17 +1,20 @@
 //Autenticar el inicio de sesión mediante passport y redirecciones correspondientes
 
 import passport from "passport";
+import {
+  AuthenticationError,
+  AuthorizationError,
+  InternalServerError,
+} from "../utils/main/errorUtils.js";
 
 export const passportCall = (strategy) => {
   return async (req, res, next) => {
     passport.authenticate(strategy, function (err, user, info) {
       if (err) {
-        return next(err);
+        return next(new InternalServerError(err));
       }
       if (!user) {
-        return res
-          .status(401)
-          .send({ error: info.messages ? info.messages : info.toString() });
+        return next(new AuthenticationError("Usuario no autenticado"));
       }
 
       req.user = user;
@@ -23,7 +26,7 @@ export const passportCall = (strategy) => {
 export const isNotAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      return next(err);
+      return next(new InternalServerError(err));
     }
     if (!user) {
       // Si el usuario no está autenticado, permite el acceso a la ruta
@@ -39,7 +42,7 @@ export const isNotAuthenticated = (req, res, next) => {
 export const isAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      return next(err);
+      return next(new InternalServerError(err));
     }
     if (!user) {
       // Si el usuario no está autenticado, redirige al login
@@ -55,7 +58,7 @@ export const isAuthenticated = (req, res, next) => {
 export const navigate = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      return next(err);
+      return next(new InternalServerError(err));
     }
     if (user) {
       req.user = user;
@@ -75,7 +78,11 @@ export const isAdmin = (req, res, next) => {
   }
   // Verifica si el rol del usuario es admin
   if (req.user.role !== "admin") {
-    return res.status(403).send({ error: "Access Denied" });
+    return next(
+      new AuthorizationError(
+        "Acceso denegado, se requiere rol de administrador"
+      )
+    );
   }
   next();
 };
@@ -88,7 +95,7 @@ export const isUserCart = (req, res, next) => {
   }
 
   if (req.user.cart.toString() !== cid) {
-    return res.status(403).send({ error: "Access Denied to this Cart" });
+    return next(new AuthorizationError("Acceso denegado a este carrito"));
   }
   next();
 };

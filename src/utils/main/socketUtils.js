@@ -11,3 +11,11 @@ export const emitCartUpdate = async (cart) => {
 export const emitProductDelete = async (product) => {
   socketServer.emit("Product Deleted", product);
 };
+
+export const emitUserChange = async (user) => {
+  socketServer.emit("User Change", user);
+};
+
+export const emitTicketChange = async (ticket) => {
+  socketServer.emit("Ticket", ticket);
+};

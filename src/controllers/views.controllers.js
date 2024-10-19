@@ -1,4 +1,4 @@
-import { getCartService } from "../services/carts.service.js";
+import { getCartService } from "../services/cart.services.js";
 import {
   getAllProductsService,
   getCategoriesProductsService,
@@ -7,7 +7,7 @@ import {
 } from "../services/products.services.js";
 import { getAllUsersService } from "../services/users.services.js";
 
-export const viewsPaginateController = async (req, res) => {
+export const viewsPaginateController = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   let limit = parseInt(req.query.limit) || 10;
   limit = limit > 10 ? 10 : limit;
@@ -65,12 +65,11 @@ export const viewsPaginateController = async (req, res) => {
 
     return res.render("index", result);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al cargar los productos." });
+    next(error);
   }
 };
 
-export const viewsProductController = async (req, res) => {
+export const viewsProductController = async (req, res, next) => {
   const idProduct = req.params.pid;
   try {
     const product = await getProductService(idProduct);
@@ -85,14 +84,11 @@ export const viewsProductController = async (req, res) => {
         .render("error/error", { msg: "Producto no encontrado." });
     }
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .render("error/error", { msg: "Error al obtener el producto." });
+    next(error);
   }
 };
 
-export const viewsCartController = async (req, res) => {
+export const viewsCartController = async (req, res, next) => {
   const cartId = req.params.cid;
   try {
     let carritoEncontrado = await getCart(cartId);
@@ -115,11 +111,11 @@ export const viewsCartController = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: "Error al obtener el carrito." });
+    next(error);
   }
 };
 
-export const viewsRTPController = async (req, res) => {
+export const viewsRTPController = async (req, res, next) => {
   try {
     const products = await getAllProductsService();
     console.log(products);
@@ -128,33 +124,34 @@ export const viewsRTPController = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: "Error al cargar los productos." });
+    next(error);
   }
 };
 
-export const viewsRTUController = async (req, res) => {
+export const viewsRTUController = async (req, res, next) => {
   try {
     const users = await getAllUsersService();
     res.render("admin/realtimeusers", {
       users,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al cargar los productos." });
+    next(error);
   }
 };
-export const viewsRTTController = async (req, res) => {};
 
-export const viewsLoginController = async (req, res) => {
+export const viewsRTTController = async (req, res, next) => {};
+
+export const viewsLoginController = async (req, res, next) => {
   res.render("users/login");
 };
-export const viewsRegisterController = async (req, res) => {
+export const viewsRegisterController = async (req, res, next) => {
   res.render("users/register");
 };
-export const viewsProfileController = async (req, res) => {
+export const viewsProfileController = async (req, res, next) => {
   res.render("users/profile", { user: req.user });
 };
 
+//esto a corregir
 async function getSessionStock(req, prod) {
   const cartId = req.user.cart;
   let cart;
@@ -188,7 +185,7 @@ async function getSessionStock(req, prod) {
     }
     return false;
   } catch (error) {
-    console.error("Error al obtener el carrito o actualizar el stock:", error);
+    console.error(error.message);
     return false;
   }
 }

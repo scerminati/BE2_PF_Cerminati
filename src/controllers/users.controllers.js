@@ -5,8 +5,9 @@ import {
 } from "../services/users.services.js";
 
 import { socketServer } from "../app.js";
+import { emitUserChange } from "../utils/main/socketUtils.js";
 
-export const getAllUsersController = async (req, res) => {
+export const getAllUsersController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);
 
   try {
@@ -20,46 +21,45 @@ export const getAllUsersController = async (req, res) => {
       payload: users,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error al obtener los carritos." });
+    next(error);
   }
 };
 
-export const makeAdmin = async (req, res) => {
+export const makeAdmin = async (req, res, next) => {
   const idUser = req.params.uid;
 
   if (!idUser || idUser.length !== 24) {
-    return res.status(400).json({ msg: "ID usuario inválido." });
+    return next(new ValidationError("ID usuario inválido."));
   }
   try {
     const newAdmin = await makeAdminService(idUser);
 
-    socketServer.emit("UserChange", newAdmin);
+    emitUserChange(newAdmin);
+
     return res.status(200).json({
       msg: `El usuario ${newAdmin.email} es ahora administrado`,
       payload: newAdmin,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error cambiar de rol." });
+    next(error);
   }
 };
 
-export const makeUser = async (req, res) => {
+export const makeUser = async (req, res, next) => {
   const idUser = req.params.uid;
   if (!idUser || idUser.length !== 24) {
-    return res.status(400).json({ msg: "ID usuario inválido." });
+    return next(new ValidationError("ID usuario inválido."));
   }
   try {
     const newUser = await makeUserService(idUser);
 
-    socketServer.emit("UserChange", newUser);
+    emitUserChange(newUser);
+
     return res.status(201).json({
       msg: `El usuario ${newUser.email} es ahora usuario`,
       payload: newUser,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Error cambiar de rol." });
+    next(error);
   }
 };

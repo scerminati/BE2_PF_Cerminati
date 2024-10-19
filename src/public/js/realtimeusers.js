@@ -14,7 +14,7 @@ socket.on("disconnect", () => {
 document.addEventListener("DOMContentLoaded", function () {
   const userList = document.getElementById("listado");
 
-  socket.on("UserChange", (userinfo) => {
+  socket.on("User Change", (userinfo) => {
     const existingUser = document.getElementById(userinfo._id);
 
     if (existingUser) {
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let { payload: newUser } = await response.json();
 
         // Emitir evento de eliminación de producto a través de Socket.io
-        socket.emit("UserChange", newUser);
+        socket.emit("User Change", newUser);
         tostada("Nuevo rol de Usuario");
       } catch (error) {
         console.error("Error al cambiar de rol", error.message);
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let { payload: newUser } = await response.json();
 
         // Emitir evento de eliminación de producto a través de Socket.io
-        socket.emit("UserChange", newUser);
+        socket.emit("User Change", newUser);
         tostada("Nuevo rol de Administrador");
       } catch (error) {
         console.error("Error al cambiar de rol", error.message);

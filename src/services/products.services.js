@@ -1,13 +1,18 @@
 import ProductsRepository from "../DAO/repositories/productsRepository.js";
 import { ProductsDAO } from "../DAO/DAOFactory.js";
 
+import {
+  InternalServerError,
+  NotFoundError,
+} from "../utils/main/errorUtils.js";
+
 const productService = new ProductsRepository(ProductsDAO);
 
 export const getAllProductsService = async (limit) => {
   let products = await productService.getAllProducts();
 
   if (!products) {
-    throw new Error("Error al obtener los productos");
+    throw new NotFoundError("Error al obtener los productos");
   }
 
   if (!isNaN(limit) && limit > 0) {
@@ -18,7 +23,7 @@ export const getAllProductsService = async (limit) => {
 export const getProductService = async (id) => {
   let product = await productService.getProduct(id);
   if (!product) {
-    throw new Error(`No se encuentra el producto con el id ${id}`);
+    throw new NotFoundError(`No se encuentra el producto con el id ${id}`);
   }
   return product;
 };
@@ -37,7 +42,7 @@ export const createProductService = async (productData) => {
   let product = await productService.createProduct(newProduct);
 
   if (!product) {
-    throw new Error(`No se pudo crear el nuevo producto.`);
+    throw new InternalServerError(`No se pudo crear el nuevo producto.`);
   }
   return product;
 };
@@ -53,34 +58,38 @@ export const editProductService = async (id, data) => {
   let product = await productService.editProduct(id, updateProduct);
 
   if (!product) {
-    throw new Error(`No se pudo editar el producto con id ${id}.`);
+    throw new InternalServerError(
+      `No se pudo editar el producto con id ${id}.`
+    );
   }
   return product;
 };
 
 export const deleteProductService = async (id) => {
-  let product = productService.deleteProduct(id);
+  let product = await productService.deleteProduct(id);
 
   if (!product) {
-    throw new Error(`No se pudo eliminar el producto con id ${id}.`);
+    throw new InternalServerError(
+      `No se pudo eliminar el producto con id ${id}.`
+    );
   }
   return product;
 };
 
 export const paginateProductsService = async (filter, values) => {
-  let products = productService.paginateProducts(filter, values);
+  let products = await productService.paginateProducts(filter, values);
 
   if (!products) {
-    throw new Error(`Error al paginar productos`);
+    throw new InternalServerError(`Error al paginar productos`);
   }
   return products;
 };
 
 export const getCategoriesProductsService = async () => {
-  let categories = productService.categoryProducts();
+  let categories = await productService.categoryProducts();
 
   if (!categories) {
-    throw new Error(`Error al obtener categorías`);
+    throw new InternalServerError(`Error al obtener categorías`);
   }
   return categories;
 };
