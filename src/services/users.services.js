@@ -6,7 +6,7 @@ import {
   createCartService,
   editProductInCartService,
   getCartService,
-} from "./carts.Services.js";
+} from "./carts.services.js";
 import { editProductService } from "./products.services.js";
 import { createTicketService } from "./tickets.services.js";
 import { editProductInCartController } from "../controllers/carts.controllers.js";

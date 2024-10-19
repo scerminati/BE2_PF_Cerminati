@@ -6,7 +6,7 @@ import {
   emptyCartService,
   deleteProductInCartService,
   editProductInCartService,
-} from "../services/carts.Services.js";
+} from "../services/carts.services.js";
 
 import { socketServer } from "../app.js";
 
@@ -50,7 +50,7 @@ export const getCartController = async (req, res) => {
 
 export const getCartQTController = async (req, res) => {
   const idCarrito = req.params.cid;
-  
+
   try {
     let QT = await getCartQTService(idCarrito);
 
