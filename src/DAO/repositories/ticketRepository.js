@@ -11,20 +11,19 @@ export default class TicketsRepository {
     return await this.dao.findById(id);
   }
 
-  async getTicketsFromUser(user) {
-    return await this.dao.findByUser(user);
+  async getTicketsFromUser(id) {
+    return await this.dao.findByUser(id);
   }
 
-  async createTicket(user, cart) {
-    return await this.dao.create(user,cart);
+  async createTicket(data) {
+    return await this.dao.create(data);
   }
 
   async editTicket(id, status) {
     return await this.dao.edit(id, status);
   }
 
-    async populateTicket(id) {
+  async populateTicket(id) {
     return await this.dao.populate(id);
   }
-
 }

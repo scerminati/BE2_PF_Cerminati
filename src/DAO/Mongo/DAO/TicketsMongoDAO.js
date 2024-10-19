@@ -2,20 +2,23 @@ import ticketModel from "../models/ticket.model.js";
 
 export default class TicketsMongoDAO {
   find = async () => {
-    let tickets = await ticketModel.find({});
-    return tickets ? await this.populate(tickets) : null;
+    return await ticketModel.find({});
   };
 
   findById = async (id) => {
-    let ticket = await ticketModel.findById(id);
-    return ticket ? this.populate(ticket) : null;
+    return await ticketModel.findById(id);
   };
 
-  findByUser = async (id) => {};
+  findByUser = async (id) => {
+    return await ticketModel.find({ user: id }).populate("products").exec();
+  };
 
-  create = async (user, cart) => {};
+  create = async (data) => {
+    return await ticketModel.create(data);
+  };
 
   edit = async (id, status) => {};
 
   populate = async (id) => {};
+
 }

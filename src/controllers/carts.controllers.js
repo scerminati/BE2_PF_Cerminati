@@ -50,10 +50,7 @@ export const getCartController = async (req, res) => {
 
 export const getCartQTController = async (req, res) => {
   const idCarrito = req.params.cid;
-
-  if (!idCarrito || idCarrito.length !== 24) {
-    return res.status(400).json({ msg: "ID de carrito inválido." });
-  }
+  
   try {
     let QT = await getCartQTService(idCarrito);
 

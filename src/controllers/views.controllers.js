@@ -1,18 +1,11 @@
-import ProductsRepository from "../DAO/repositories/productsRepository.js";
-import CartsRepository from "../DAO/repositories/cartsRepository.js";
-import UsersRepository from "../DAO/repositories/usersRepository.js";
-import SessionsRepository from "../DAO/repositories/sessionsRepository.js";
+import { getCartService } from "../services/carts.services.js";
 import {
-  ProductsDAO,
-  CartsDAO,
-  UsersDAO,
-  SessionsDAO,
-} from "../DAO/DAOFactory.js";
-
-const productsService = new ProductsRepository(ProductsDAO);
-const cartService = new CartsRepository(CartsDAO);
-const userService = new UsersRepository(UsersDAO);
-const sessionService = new SessionsRepository(SessionsDAO);
+  getAllProductsService,
+  getCategoriesProductsService,
+  getProductService,
+  paginateProductsService,
+} from "../services/products.services.js";
+import { getAllUsersService } from "../services/users.services.js";
 
 export const viewsPaginateController = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -40,13 +33,13 @@ export const viewsPaginateController = async (req, res) => {
     };
   }
   try {
-    result = await productsService.paginateProducts(filter, {
+    result = await paginateProductsService(filter, {
       page,
       limit,
       sort: sortValue,
     });
 
-    const allCategories = await productsService.categoryProducts();
+    const allCategories = await getCategoriesProductsService();
 
     result.sort = sort;
     result.category = category;
@@ -80,7 +73,7 @@ export const viewsPaginateController = async (req, res) => {
 export const viewsProductController = async (req, res) => {
   const idProduct = req.params.pid;
   try {
-    const product = await productsService.getProduct(idProduct);
+    const product = await getProductService(idProduct);
 
     if (product) {
       res.render("products/productDetail", {
@@ -102,7 +95,7 @@ export const viewsProductController = async (req, res) => {
 export const viewsCartController = async (req, res) => {
   const cartId = req.params.cid;
   try {
-    let carritoEncontrado = await cartService.getCart(cartId);
+    let carritoEncontrado = await getCart(cartId);
 
     if (!carritoEncontrado) {
       return res
@@ -128,7 +121,7 @@ export const viewsCartController = async (req, res) => {
 
 export const viewsRTPController = async (req, res) => {
   try {
-    const products = await productsService.getAllProducts();
+    const products = await getAllProductsService();
     console.log(products);
     res.render("admin/realtimeproducts", {
       products,
@@ -141,7 +134,7 @@ export const viewsRTPController = async (req, res) => {
 
 export const viewsRTUController = async (req, res) => {
   try {
-    const users = await userService.getAllUsers();
+    const users = await getAllUsersService();
     res.render("admin/realtimeusers", {
       users,
     });
@@ -168,7 +161,7 @@ async function getSessionStock(req, prod) {
 
   try {
     if (cartId) {
-      cart = await cartService.getCart(cartId);
+      cart = await getCartService(cartId);
 
       if (!cart) {
         // En lugar de enviar una respuesta, lanza un error o retorna un estado

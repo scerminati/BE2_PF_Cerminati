@@ -7,7 +7,11 @@ export default class UsersRepository {
     return await this.dao.find();
   }
 
-  async getUser(id) {
+  async getUserByEmail(email) {
+    return await this.dao.findByEmail(email);
+  }
+
+  async getUserById(id) {
     return await this.dao.findById(id);
   }
 
@@ -23,12 +27,8 @@ export default class UsersRepository {
     return await this.dao.edit(id, cartId);
   }
 
-  async makeAdmin(id) {
-    return await this.dao.admin(id);
-  }
-
-  async makeUser(id) {
-    return await this.dao.user(id);
+  async roleChange(id, role) {
+    return await this.dao.role(id, role);
   }
 
   async createHash(pass) {
@@ -36,7 +36,10 @@ export default class UsersRepository {
   }
 
   async validatePassword(user, pass) {
-    return await this.dao.validate(user,pass);
+    return await this.dao.validate(user, pass);
   }
 
+  async getLoggedUser(id) {
+    return await this.dao.current(id);
+  }
 }

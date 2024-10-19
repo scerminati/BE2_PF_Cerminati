@@ -1,29 +1,23 @@
-import UsersRepository from "../DAO/repositories/usersRepository.js";
-import { UsersDAO } from "../DAO/DAOFactory.js";
+import {
+  getAllUsersService,
+  makeAdminService,
+  makeUserService,
+} from "../services/users.services.js";
 
 import { socketServer } from "../app.js";
-
-const userService = new UsersRepository(UsersDAO);
 
 export const getAllUsersController = async (req, res) => {
   let limit = parseInt(req.query.limit);
 
   try {
-    let users = await userService.getAllUsers();
-
-    if (!users.length) {
-      return res.status(404).json({ msg: "No hay usuarios para mostrar" });
-    }
-
-    let usersLimitados =
-      !isNaN(limit) && limit > 0 ? users.slice(0, limit) : users;
+    let users = await getAllUsersService();
 
     return res.status(200).json({
       msg:
-        usersLimitados.length < users.length
+        users < limit
           ? `Mostrando los primeros ${limit} usuarios`
           : "Mostrando todos los usuarios",
-      payload: usersLimitados,
+      payload: users,
     });
   } catch (error) {
     console.error(error);
@@ -34,38 +28,36 @@ export const getAllUsersController = async (req, res) => {
 export const makeAdmin = async (req, res) => {
   const idUser = req.params.uid;
 
+  if (!idUser || idUser.length !== 24) {
+    return res.status(400).json({ msg: "ID usuario inválido." });
+  }
   try {
-    const newAdmin = await userService.makeAdmin(idUser);
+    const newAdmin = await makeAdminService(idUser);
 
-    if (newAdmin) {
-      socketServer.emit("UserChange", newAdmin);
-      return res.status(201).json({
-        msg: `El usuario ${newAdmin.email} es ahora administrado`,
-        payload: newAdmin,
-      });
-    } else {
-      return res.status(404).json({ msg: "No se encuentra el usuario" });
-    }
+    socketServer.emit("UserChange", newAdmin);
+    return res.status(200).json({
+      msg: `El usuario ${newAdmin.email} es ahora administrado`,
+      payload: newAdmin,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ msg: "Error cambiar de rol." });
   }
 };
+
 export const makeUser = async (req, res) => {
   const idUser = req.params.uid;
-
+  if (!idUser || idUser.length !== 24) {
+    return res.status(400).json({ msg: "ID usuario inválido." });
+  }
   try {
-    const newUser = await userService.makeUser(idUser);
+    const newUser = await makeUserService(idUser);
 
-    if (newUser) {
-      socketServer.emit("UserChange", newUser);
-      return res.status(201).json({
-        msg: `El usuario ${newUser.email} es ahora usuario`,
-        payload: newUser,
-      });
-    } else {
-      return res.status(404).json({ msg: "No se encuentra el usuario" });
-    }
+    socketServer.emit("UserChange", newUser);
+    return res.status(201).json({
+      msg: `El usuario ${newUser.email} es ahora usuario`,
+      payload: newUser,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ msg: "Error cambiar de rol." });

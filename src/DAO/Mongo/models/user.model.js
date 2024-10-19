@@ -13,10 +13,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "carts",
   },
-  ticket: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "tickets",
-  },
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

@@ -76,7 +76,7 @@ export const paginateProductsService = async (filter, values) => {
   return products;
 };
 
-export const getCategoriesProducts = async () => {
+export const getCategoriesProductsService = async () => {
   let categories = productService.categoryProducts();
 
   if (!categories) {
