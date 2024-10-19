@@ -1,8 +1,9 @@
-import User from "../DAO/services/usersServices.js";
+import UsersRepository from "../DAO/repositories/usersRepository.js";
+import { UsersDAO } from "../DAO/DAOFactory.js";
 
 import { socketServer } from "../app.js";
 
-const userService = new User();
+const userService = new UsersRepository(UsersDAO);
 
 export const getAllUsersController = async (req, res) => {
   let limit = parseInt(req.query.limit);

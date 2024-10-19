@@ -1,29 +1,29 @@
 import cartsModel from "../models/carts.model.js";
 
-export default class Cart {
-  getAllCarts = async () => {
+export default class CartsMongoDAO {
+  find = async () => {
     try {
       let carts = await cartsModel.find({});
-      return await this.populateCart(carts);
+      return carts ? await this.populate(carts) : null;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
-  getCart = async (id) => {
+  findById = async (id) => {
     try {
       let cart = await cartsModel.findOne({ _id: id });
-      return cart ? await this.populateCart(cart) : null;
+      return cart ? await this.populate(cart) : null;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
-  getCartQT = async (id) => {
+  QT = async (id) => {
     try {
-      let cart = await this.getCart(id);
+      let cart = await this.findById(id);
 
       if (!cart) {
         return null;
@@ -32,7 +32,7 @@ export default class Cart {
         const cartQT = cart.products.reduce((total, product) => {
           return total + product.quantity;
         }, 0);
-        return cartQT;
+        return cartQT
       } else return 0;
     } catch (error) {
       console.error(error);
@@ -40,10 +40,10 @@ export default class Cart {
     }
   };
 
-  createCart = async () => {
+  create = async () => {
     try {
       return await cartsModel.create({
-        id: await this.getNextIdC(),
+        id: await this.nextId(),
         products: [],
       });
     } catch (error) {
@@ -52,9 +52,9 @@ export default class Cart {
     }
   };
 
-  editCart = async (id, idprod, qty) => {
+  edit = async (id, idprod, qty) => {
     try {
-      let cart = await this.getCart(id);
+      let cart = await this.findById(id);
       let prodIndex = cart.products.findIndex(
         (prod) => prod.product._id.toString() === idprod
       );
@@ -74,22 +74,22 @@ export default class Cart {
           new: true,
         }
       );
-      return cartUpdated ? await this.populateCart(cartUpdated) : null;
+      return cartUpdated ? await this.populate(cartUpdated) : null;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
 
-  emptyCart = async (id) => {
+  empty = async (id) => {
     try {
-      let cart = await this.getCart(id);
+      let cart = await this.findById(id);
       if (cart) {
         cart.products = [];
         let updatedCart = await cartsModel.findOneAndUpdate({ _id: id }, cart, {
           new: false,
         });
-        return await this.populateCart(updatedCart);
+        return updatedCart ? await this.populate(updatedCart) : null;
       } else return null;
     } catch (error) {
       console.error(error);
@@ -97,10 +97,10 @@ export default class Cart {
     }
   };
 
-  delete1Cart = async (id, prod) => {
+  delete = async (id, prod) => {
     try {
       console.log("idProd", prod);
-      let cart = await this.getCart(id);
+      let cart = await this.findById(id);
       if (cart) {
         let product = cart.products.find(
           (prodCarrito) => prodCarrito.product._id.toString() === prod
@@ -120,7 +120,7 @@ export default class Cart {
           }
         );
 
-        return await this.populateCart(updatedCart);
+        return updatedCart? await this.populate(updatedCart) : null
       } else return null;
     } catch (error) {
       console.error(error);
@@ -128,7 +128,7 @@ export default class Cart {
     }
   };
 
-  populateCart = async (cartpopulate) => {
+  populate = async (cartpopulate) => {
     try {
       const cartsArray = Array.isArray(cartpopulate)
         ? cartpopulate
@@ -159,7 +159,7 @@ export default class Cart {
     }
   };
 
-  getNextIdC = async () => {
+  nextId = async () => {
     try {
       const lastCart = await cartsModel.findOne({}, {}, { sort: { id: -1 } });
       return lastCart ? lastCart.id + 1 : 1;
@@ -169,12 +169,3 @@ export default class Cart {
     }
   };
 }
-
-// xxxxx = async () => {
-//   try {
-//     return await MONGOOSE
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };

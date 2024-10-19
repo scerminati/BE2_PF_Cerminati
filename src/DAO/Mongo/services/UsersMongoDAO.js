@@ -1,10 +1,10 @@
 import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
-import UserDTO from "../DTO/user.DTO.js";
+import UserDTO from "../../DTO/user.DTO.js";
 
-export default class User {
-  getAllUsers = async () => {
+export default class UsersMongoDAO {
+  find = async () => {
     try {
       let user = await userModel.find({});
       return user ? user.map((user) => new UserDTO(user)) : null;
@@ -14,7 +14,7 @@ export default class User {
     }
   };
 
-  getUser = async (email) => {
+  findById = async (email) => {
     try {
       let user = await userModel.findOne({ email });
       return user ? new UserDTO(user) : null;
@@ -24,9 +24,9 @@ export default class User {
     }
   };
 
-  loginUser = async (email, pass) => {
+  login = async (email, pass) => {
     try {
-      let user = await this.getUser(email);
+      let user = await this.findById(email);
 
       return this.validatePassword(user, pass) ? new UserDTO(user) : null;
     } catch (error) {
@@ -35,7 +35,7 @@ export default class User {
     }
   };
 
-  createUser = async (info) => {
+  create = async (info) => {
     try {
       info.password = await this.createHash(info.password);
       let user = await userModel.create(info);
@@ -46,7 +46,7 @@ export default class User {
     }
   };
 
-  updateUserCart = async (userId, newCartId) => {
+  edit = async (userId, newCartId) => {
     try {
       let user = await userModel.findByIdAndUpdate(
         userId,
@@ -60,7 +60,7 @@ export default class User {
     }
   };
 
-  makeAdmin = async (userId) => {
+  admin = async (userId) => {
     try {
       let user = await userModel.findOneAndUpdate(
         { _id: userId },
@@ -76,7 +76,7 @@ export default class User {
     }
   };
 
-  makeUser = async (userId) => {
+  user = async (userId) => {
     try {
       let user = await userModel.findOneAndUpdate(
         { _id: userId },

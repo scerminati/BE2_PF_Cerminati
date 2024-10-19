@@ -1,8 +1,9 @@
-import Product from "../DAO/services/productsServices.js";
+import ProductsRepository from "../DAO/repositories/productsRepository.js";
+import { ProductsDAO } from "../DAO/DAOFactory.js";
 
 import { socketServer } from "../app.js";
 
-const productService = new Product();
+const productService = new ProductsRepository(ProductsDAO);
 
 export const getAllProductsController = async (req, res) => {
   let limit = parseInt(req.query.limit);
@@ -72,7 +73,7 @@ export const createProductController = async (req, res) => {
 
   try {
     let newProduct = {
-      id: await productService.nextId(),
+      id: "",
       title,
       description,
       code,

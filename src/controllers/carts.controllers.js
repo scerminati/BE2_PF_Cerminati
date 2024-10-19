@@ -1,10 +1,12 @@
-import Cart from "../DAO/services/cartsServices.js";
-import Product from "../DAO/services/productsServices.js";
+import CartsRepository from "../DAO/repositories/cartsRepository.js";
+import ProductsRepository from "../DAO/repositories/productsRepository.js";
+import { CartsDAO, ProductsDAO } from "../DAO/DAOFactory.js";
 
 import { socketServer } from "../app.js";
 
-const cartService = new Cart();
-const productService = new Product();
+const productService = new ProductsRepository(ProductsDAO);
+const cartService = new CartsRepository(CartsDAO);
+
 
 export const getAllCartsController = async (req, res) => {
   let limit = parseInt(req.query.limit);

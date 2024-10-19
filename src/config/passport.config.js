@@ -2,7 +2,7 @@ import passport from "passport";
 import jwt from "passport-jwt";
 import dotenv from "dotenv";
 
-import userModel from "../DAO/models/user.model.js";
+import userModel from "../DAO/Mongo/models/user.model.js";
 
 dotenv.config();
 const SECRET_PASSPORT = process.env.SECRET_PASSPORT;

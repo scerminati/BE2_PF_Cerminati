@@ -1,14 +1,15 @@
-import Session from "../DAO/services/sessionsServices.js";
-import User from "../DAO/services/usersServices.js";
-import Cart from "../DAO/services/cartsServices.js";
+import SessionsRepository from "../DAO/repositories/sessionsRepository.js";
+import UsersRepository from "../DAO/repositories/usersRepository.js";
+import CartsRepository from "../DAO/repositories/cartsRepository.js";
+import { CartsDAO, SessionsDAO, UsersDAO } from "../DAO/DAOFactory.js";
 
 import { socketServer } from "../app.js";
 
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
-const sessionService = new Session();
-const userService = new User();
-const cartService = new Cart();
+const sessionService = new SessionsRepository(SessionsDAO);
+const cartService = new CartsRepository(CartsDAO);
+const userService = new UsersRepository(UsersDAO);
 
 export const getLoggedUserController = async (req, res) => {
   const userId = req.user._id;

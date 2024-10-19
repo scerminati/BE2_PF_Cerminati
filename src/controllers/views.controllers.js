@@ -1,11 +1,13 @@
-import Product from "../DAO/services/productsServices.js";
-import Cart from "../DAO/services/cartsServices.js";
-import User from "../DAO/services/usersServices.js";
-import { getLoggedUserController } from "./sessions.controller.js";
+import ProductsRepository from "../DAO/repositories/productsRepository.js";
+import CartsRepository from "../DAO/repositories/cartsRepository.js";
+import UsersRepository from "../DAO/repositories/usersRepository.js";
+import SessionsRepository from "../DAO/repositories/sessionsRepository.js";
+import { ProductsDAO, CartsDAO, UsersDAO, SessionsDAO } from "../DAO/DAOFactory.js";
 
-const productsService = new Product();
-const cartService = new Cart();
-const usersService = new User();
+const productsService = new ProductsRepository(ProductsDAO)
+const cartService = new CartsRepository(CartsDAO);
+const userService = new UsersRepository(UsersDAO);
+const sessionService = new SessionsRepository(SessionsDAO)
 
 export const viewsPaginateController = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -131,7 +133,7 @@ export const viewsRTPController = async (req, res) => {
 
 export const viewsRTUController = async (req, res) => {
   try {
-    const users = await usersService.getAllUsers();
+    const users = await userService.getAllUsers();
     console.log(users);
     res.render("admin/realtimeusers", {
       users,
