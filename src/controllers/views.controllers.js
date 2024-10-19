@@ -1,4 +1,4 @@
-import { getCartService } from "../services/carts.services.js";
+import { getCartService } from "../services/carts.service.js";
 import {
   getAllProductsService,
   getCategoriesProductsService,

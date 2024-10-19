@@ -6,7 +6,7 @@ import {
   emptyCartService,
   deleteProductInCartService,
   editProductInCartService,
-} from "../services/carts.services.js";
+} from "../services/carts.service.js";
 
 import { socketServer } from "../app.js";
 
