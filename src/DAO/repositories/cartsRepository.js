@@ -10,23 +10,19 @@ export default class CartsRepository {
     return await this.dao.findById(id);
   }
 
-  async getCartQT(id) {
-    return await this.dao.QT(id);
+  async createCart(data) {
+    return await this.dao.create(data);
   }
 
-  async createCart() {
-    return await this.dao.create();
+  async editCart(id, prods) {
+    return await this.dao.edit(id, prods);
   }
 
-  async editCart(id, prod, qty) {
-    return await this.dao.edit(id, prod, qty);
+  async populateCart(cart) {
+    return await this.dao.populate(cart);
   }
 
-  async emptyCart(id) {
-    return await this.dao.empty(id);
-  }
-
-  async delete1Cart(id, prod) {
-    return await this.dao.delete(id, prod);
+  async nextIdC() {
+    return await this.dao.nextIdC();
   }
 }

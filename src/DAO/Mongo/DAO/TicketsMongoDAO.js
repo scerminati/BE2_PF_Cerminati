@@ -17,5 +17,5 @@ export default class TicketsMongoDAO {
 
   edit = async (id, status) => {};
 
-  populate = async (ticket) => {};
+  populate = async (id) => {};
 }

@@ -30,4 +30,13 @@ export default class UsersRepository {
   async makeUser(id) {
     return await this.dao.user(id);
   }
+
+  async createHash(pass) {
+    return await this.dao.hash(pass);
+  }
+
+  async validatePassword(user, pass) {
+    return await this.dao.validate(user,pass);
+  }
+
 }

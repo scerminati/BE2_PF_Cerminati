@@ -92,11 +92,11 @@ export default class UsersMongoDAO {
     }
   };
 
-  createHash = async (password) => {
+  hash = async (password) => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
   };
 
-  validatePassword = async (user, password) => {
+  validate = async (user, password) => {
     return bcrypt.compareSync(password, user.password);
   };
 }

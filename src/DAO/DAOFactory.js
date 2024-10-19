@@ -1,8 +1,8 @@
-import ProductsMongoDAO from "./Mongo/services/ProductsMongoDAO.js";
-import CartsMongoDAO from "./Mongo/services/CartsMongoDAO.js";
-import UsersMongoDAO from "./Mongo/services/UsersMongoDAO.js";
-import SessionsMongoDAO from "./Mongo/services/SessionsMongoDAO.js";
-import TicketsMongoDAO from "./Mongo/services/TicketsMongoDAO.js";
+import ProductsMongoDAO from "./Mongo/DAO/ProductsMongoDAO.js";
+import CartsMongoDAO from "./Mongo/DAO/CartsMongoDAO.js";
+import UsersMongoDAO from "./Mongo/DAO/UsersMongoDAO.js";
+import SessionsMongoDAO from "./Mongo/DAO/SessionsMongoDAO.js";
+import TicketsMongoDAO from "./Mongo/DAO/TicketsMongoDAO.js";
 
 import { PERSISTENCE } from "../config/persistence.config.js";
 

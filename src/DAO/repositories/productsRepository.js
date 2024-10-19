@@ -10,6 +10,10 @@ export default class ProductsRepository {
     return await this.dao.findById(id);
   }
 
+  async nextId() {
+    return await this.dao.nextId();
+  }
+
   async createProduct(product) {
     return await this.dao.create(product);
   }

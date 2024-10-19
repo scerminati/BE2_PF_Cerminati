@@ -1,7 +1,13 @@
 import SessionsRepository from "../DAO/repositories/sessionsRepository.js";
 import UsersRepository from "../DAO/repositories/usersRepository.js";
 import CartsRepository from "../DAO/repositories/cartsRepository.js";
-import { CartsDAO, SessionsDAO, UsersDAO } from "../DAO/DAOFactory.js";
+import TicketsRepository from "../DAO/repositories/ticketRepository.js";
+import {
+  CartsDAO,
+  SessionsDAO,
+  UsersDAO,
+  TicketsDAO,
+} from "../DAO/DAOFactory.js";
 
 import { socketServer } from "../app.js";
 
@@ -10,6 +16,7 @@ import { generateToken } from "../utils/session/webTokenUtil.js";
 const sessionService = new SessionsRepository(SessionsDAO);
 const cartService = new CartsRepository(CartsDAO);
 const userService = new UsersRepository(UsersDAO);
+const ticketService = new TicketsRepository(TicketsDAO)
 
 export const getLoggedUserController = async (req, res) => {
   const userId = req.user._id;
@@ -34,8 +41,8 @@ export const getLoggedUserController = async (req, res) => {
       cart: user.cart,
     });
   } catch (error) {
-    console.error("Error al obtener los datos del usuario logueado:", error);
-    res.status(500).send({ error: "Error al obtener los datos del usuario" });
+    console.error(error);
+    return res.status(500).send({ error: "Error al obtener los datos del usuario" });
   }
 };
 
@@ -82,7 +89,8 @@ export const registerUserController = async (req, res) => {
 
     res.redirect("/login");
   } catch (error) {
-    console.error("Error al registrar usuario:", error);
+    console.error(error);
+    return res.status(500).send({ msg: "Error al registrar al usuario" });
   }
 };
 
@@ -110,12 +118,13 @@ export const loginUserController = async (req, res) => {
 
     return res.redirect("/profile");
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+    console.error(error);
     return res
       .status(500)
       .send({ msg: "Error en el servidor al iniciar sesión" });
   }
 };
+
 export const logoutUserController = async (req, res) => {
   res.clearCookie("jwt");
   res.redirect("/");
@@ -132,14 +141,18 @@ export const checkoutCartController = async (req, res) => {
       return res.status(404).send({ error: "Carrito no encontrado" });
     }
 
+
+
+    
     // Crea un nuevo carrito
     let newCart = await cartService.createCart();
+
     let userModified = await userService.updateUserCart(userId, newCart._id);
 
     // Responder al cliente con un mensaje de éxito
-    res.status(200).send({ msg: "Compra realizada exitosamente" });
+    return res.status(200).send({ msg: "Compra realizada exitosamente" });
   } catch (error) {
-    console.error("Error al completar la compra:", error);
-    res.status(500).send({ error: "Error al completar la compra" });
+    console.error(error);
+    return res.status(500).send({ error: "Error al completar la compra" });
   }
 };

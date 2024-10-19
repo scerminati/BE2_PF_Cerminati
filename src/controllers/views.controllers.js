@@ -2,12 +2,17 @@ import ProductsRepository from "../DAO/repositories/productsRepository.js";
 import CartsRepository from "../DAO/repositories/cartsRepository.js";
 import UsersRepository from "../DAO/repositories/usersRepository.js";
 import SessionsRepository from "../DAO/repositories/sessionsRepository.js";
-import { ProductsDAO, CartsDAO, UsersDAO, SessionsDAO } from "../DAO/DAOFactory.js";
+import {
+  ProductsDAO,
+  CartsDAO,
+  UsersDAO,
+  SessionsDAO,
+} from "../DAO/DAOFactory.js";
 
-const productsService = new ProductsRepository(ProductsDAO)
+const productsService = new ProductsRepository(ProductsDAO);
 const cartService = new CartsRepository(CartsDAO);
 const userService = new UsersRepository(UsersDAO);
-const sessionService = new SessionsRepository(SessionsDAO)
+const sessionService = new SessionsRepository(SessionsDAO);
 
 export const viewsPaginateController = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -65,9 +70,10 @@ export const viewsPaginateController = async (req, res) => {
       result.docs = prodStock;
     }
 
-    res.render("index", result);
+    return res.render("index", result);
   } catch (error) {
-    res.status(500).json({ msg: "Error al cargar los productos." });
+    console.error(error);
+    return res.status(500).json({ msg: "Error al cargar los productos." });
   }
 };
 
@@ -81,11 +87,13 @@ export const viewsProductController = async (req, res) => {
         product,
       });
     } else {
-      res.status(404).render("error/error", { msg: "Producto no encontrado." });
+      return res
+        .status(404)
+        .render("error/error", { msg: "Producto no encontrado." });
     }
   } catch (error) {
-    console.log(error);
-    res
+    console.error(error);
+    return res
       .status(500)
       .render("error/error", { msg: "Error al obtener el producto." });
   }
@@ -113,8 +121,8 @@ export const viewsCartController = async (req, res) => {
       totalPrice,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Error al obtener el carrito." });
+    console.error(error);
+    return res.status(500).json({ msg: "Error al obtener el carrito." });
   }
 };
 
@@ -126,21 +134,20 @@ export const viewsRTPController = async (req, res) => {
       products,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Error al cargar los productos." });
+    console.error(error);
+    return res.status(500).json({ msg: "Error al cargar los productos." });
   }
 };
 
 export const viewsRTUController = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
-    console.log(users);
     res.render("admin/realtimeusers", {
       users,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ msg: "Error al cargar los productos." });
+    console.error(error);
+    return res.status(500).json({ msg: "Error al cargar los productos." });
   }
 };
 export const viewsRTTController = async (req, res) => {};

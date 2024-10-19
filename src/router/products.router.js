@@ -27,12 +27,12 @@ router.post(
 
 router.put(
   "/:pid",
- /* isAuthenticated,
-  isAdmin,*/
+  isAuthenticated,
+  isAdmin,
   uploader.single("thumbnail"),
   editProductController
 );
 
-router.delete("/:pid", /*isAuthenticated, isAdmin,*/ deleteProductController);
+router.delete("/:pid", isAuthenticated, isAdmin, deleteProductController);
 
 export default router;

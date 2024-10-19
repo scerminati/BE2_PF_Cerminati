@@ -17,6 +17,7 @@ import productsRouter from "./router/products.router.js";
 import sessionRouter from "./router/session.router.js";
 import viewsRouter from "./router/views.router.js";
 import usersRouter from "./router/users.router.js";
+import ticketsRouter from "./router/tickets.router.js";
 
 import { Server } from "socket.io";
 import { helpers } from "./utils/main/handlebarsHelpers.js";
@@ -72,6 +73,7 @@ app.use("/api/carts", cartRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionRouter);
+app.use("/api/tickets", ticketsRouter);
 app.use("/", viewsRouter);
 
 // Crear instancia de Handlebars con helpers personalizados
