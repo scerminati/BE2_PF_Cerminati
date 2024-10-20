@@ -69,7 +69,7 @@ export const checkoutService = async (userId) => {
       return total + item.totalProduct;
     }, 0);
 
-    console.log(currentPurchase);
+
     let ticket = await createTicketService(userId, currentPurchase, totalPrice);
 
     let newCart = await createCartService();

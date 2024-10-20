@@ -1,20 +1,6 @@
-Lista de pendientes:
-1. Routeo para arquitecturas por capas
-- Controller
-- Service
-- Factory ?
-- DAO
-- DTO ?
-- Repository ?
-2. Autentificación, modificar los archivos PassportUtils y auth.js para que auth.js me haga todo con la estrategia jwt, de manera que quede. Si el usuario no está autentificado, redireccionar a login, sino, verificar rol, mandar error, sino, permitir acceso. Para modificar Products, Carts, y Users. (Qué hago con views)
-3. Chequear Views, está raro para renderizar
-4. Ver clase Mailing -> ticket de checkout en pdf?
-5. Actualizar ReadMe
-6. Una vez que está todo eso hecho, realizar un realTimeUsers, para poder modificar los usuarios (solo los accesos), y Eliminarlos en caso de que sea necesario.
-
 # Backend II - Proyecto Final - Sofía Cerminati
 
-Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend II: Diseño y Arquitectura Backend de CODERHOUSE, comisión 70070, con el profesor Omar Jesús Maniás. 
+Este proyecto es la programación del Backend del E-Commerce So-Games, para juegos de mesa, junto con la implementación de su FrontEnd. El mismo se realiza como finalización del curso Programación Backend II: Diseño y Arquitectura Backend de CODERHOUSE, comisión 70070, con el profesor Omar Jesús Maniás.
 
 ## Tabla de Contenidos
 
@@ -95,7 +81,7 @@ La aplicación cuenta con cuatro routers: _products_, _carts_, _sessions_ y _vie
 
 ### Sessions
 
-- **GET**: El endpoint de `GET` de Sessions permite obtener los datos del usuario autenticado. 
+- **GET**: El endpoint de `GET` de Sessions permite obtener los datos del usuario autenticado.
 
   - **/current**: Envía los datos del usuario logeado una vez que se autentica la sesión del mismo al frontend.
 
@@ -107,7 +93,7 @@ La aplicación cuenta con cuatro routers: _products_, _carts_, _sessions_ y _vie
 
   - **/logout**: Permite la finalización de la sesión, eliminando la cookie del navegador.
 
-  - **/checkout**: Actualiza el estado del usuario, creando un nuevo carrito en su usuario y guardando el anterior. 
+  - **/checkout**: Actualiza el estado del usuario, creando un nuevo carrito en su usuario y guardando el anterior.
 
 ### Views
 
@@ -162,7 +148,7 @@ Se utiliza `express-session` para mantener la sesión en MongoStore. Adicionalme
 
 El archivo `utils.js` contiene una serie de scripts y helpers diseñados para facilitar tareas comunes y operaciones en la aplicación. A continuación, se describen sus principales funcionalidades:
 
-1. **Simulación de __dirname en Módulos ES**:  
+1. **Simulación de \_\_dirname en Módulos ES**:  
    Dado que los módulos ES no soportan nativamente el valor `__dirname`, se ha implementado una solución que permite obtener el directorio actual del archivo. Esto es esencial para manejar rutas de forma consistente dentro del proyecto.
 
 2. **Generación de IDs Incrementales (como método interno de uso de IDs)**:
@@ -186,9 +172,9 @@ El archivo `utils.js` contiene una serie de scripts y helpers diseñados para fa
 - **cart**: Permite la visualización del carrito actual, dejando que el usuario pueda modificar cantidades y/o eliminar productos. Adicionalmente permite realizar un checkout, el mismo eliminará el _idCart_ del local storage, y abrirá uno nuevo cuando se ingrese nuevamente a la página. Este carrito queda almacenado en la base de datos, y no se podrá modificar las cantidades ni los productos desde la sesión nueva.
 - **login**: Permite el inicio de sesión del usuario.
 - **productDetail**: Visualización de los detalles del producto seleccionado. Permite también añadir al carrito. Si el producto ya se encuentra en el carrito, no permitirá modificar la cantidad. La misma se debe hacer desde la visualización del carrito.
-- **profile**: Visualización de los datos básicos del usuario. 
+- **profile**: Visualización de los datos básicos del usuario.
 - **realtimeproducts**: La aplicación cuenta con una funcionalidad en tiempo real que permite la visualización y gestión dinámica de productos desde una vista de administrador. Esta funcionalidad se implementa utilizando **Socket.io** para permitir la comunicación en tiempo real entre el servidor y el cliente, permitiendo eliminar, modificar y añadir productos en la base de datos.
-- **register**: Habilita el registro de un usuario nuevo. 
+- **register**: Habilita el registro de un usuario nuevo.
 
 ## Estructura del Proyecto
 
@@ -255,7 +241,7 @@ BE2-PF-Cerminati
 │
 ├── .gitignore  # Archivos y carpetas a ignorar por Git
 ├── package.json  # Archivo de configuración de dependencias
-└── README.md  # Archivo de documentación del proyecto                     
+└── README.md  # Archivo de documentación del proyecto
 
 ```
 
@@ -274,7 +260,6 @@ BE2-PF-Cerminati
 - **`.gitignore`**: Especifica los archivos y carpetas que deben ser ignorados por Git.
 - **`package.json`**: Contiene la configuración del proyecto y las dependencias.
 - **`README.md`**: Proporciona documentación sobre el proyecto.
-
 
 ## Recursos Utilizados
 
@@ -310,4 +295,3 @@ Este proyecto utiliza las siguientes tecnologías y bibliotecas:
   - Versión: `^16.4.5`
 - **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)**: Biblioteca para trabajar con JSON Web Tokens (JWT).
   - Versión: `^9.0.2`
-

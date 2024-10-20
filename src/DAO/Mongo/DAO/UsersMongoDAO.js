@@ -33,7 +33,7 @@ export default class UsersMongoDAO {
     return await userModel.findByIdAndUpdate(
       userId,
       { cart: newCartId },
-      { new: true } // devuelve el documento actualizado
+      { new: true } 
     );
   };
 

@@ -49,11 +49,6 @@ export const registerUserController = async (req, res, next) => {
     };
 
     let createdUser = await registerUserService(newUser);
-    console.log(
-      "Usuario creado exitosamente:",
-      createdUser,
-      `y nuevo carrito creado para el usuario con id ${createdUser.cart}`
-    );
 
     emitUserChange(createdUser);
 

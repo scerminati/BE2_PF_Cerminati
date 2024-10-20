@@ -30,11 +30,11 @@ const fileFilter = (req, file, cb) => {
 // Middleware para manejar errores de multer
 const multerErrorHandler = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    // Si es un error de multer
-    return next(new BadRequestError(err.message)); // Pasar el error a tu errorHandler
+
+    return next(new BadRequestError(err.message));
   } else if (err) {
-    // Si es otro tipo de error
-    return next(err); // Pasar el error a tu errorHandler
+    
+    return next(err);
   }
 };
 

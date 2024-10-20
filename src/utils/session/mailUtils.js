@@ -59,6 +59,5 @@ export async function emailBody(user, products, amount, code) {
         `,
   };
 
-  console.log(body);
   return body;
 }

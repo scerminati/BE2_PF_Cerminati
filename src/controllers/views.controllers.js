@@ -119,7 +119,6 @@ export const viewsCartController = async (req, res, next) => {
 export const viewsRTPController = async (req, res, next) => {
   try {
     const products = await getAllProductsService();
-    console.log(products);
     res.render("admin/realtimeproducts", {
       products,
     });
@@ -151,7 +150,6 @@ export const viewsProfileController = async (req, res, next) => {
   res.render("users/profile", { user: req.user });
 };
 
-//esto a corregir
 async function getSessionStock(req, prod) {
   let cartId;
   if (!req.user) {

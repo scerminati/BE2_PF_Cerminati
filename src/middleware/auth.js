@@ -26,8 +26,7 @@ export const passportCall = (strategy) => {
 export const isNotAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      //return next(new InternalServerError(err));
-      return next(err);
+      return next(new InternalServerError(err));
     }
     if (!user) {
       // Si el usuario no está autenticado, permite el acceso a la ruta
@@ -42,14 +41,12 @@ export const isNotAuthenticated = (req, res, next) => {
 export const isAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-
-      return next(err);
+      return next(new InternalServerError(err));
     }
     if (!user) {
-
       return res.redirect("/login");
     }
-  
+
     req.user = user;
     next();
   })(req, res, next);

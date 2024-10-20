@@ -27,7 +27,7 @@ export const getAllCartsService = async (limit) => {
 
 export const getCartService = async (id) => {
   let cart = await cartService.getCart(id);
-  console.log(cart);
+
   if (!cart) {
     throw new NotFoundError(`El carrito con id ${id} no exite`);
   }
