@@ -24,7 +24,7 @@ router.get("/current", isAuthenticated, getLoggedUserController);
 router.post("/login", isNotAuthenticated, loginUserController);
 router.post("/logout", isAuthenticated, logoutUserController);
 
-router.post("/checkout", isAuthenticated, checkoutCartController);
+router.post("/:cid/checkout", isAuthenticated, checkoutCartController);
 
 router.get("/cartLink", navigate, cartLinkUpdateController);
 

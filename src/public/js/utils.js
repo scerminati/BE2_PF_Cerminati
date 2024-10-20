@@ -1,11 +1,14 @@
 //Get Card Id para el proyecto, solamente adquiere el ID del cart, pero se puede obtener todos los datos de sesión del usuario.
 
 const getCartId = async () => {
+  console.log("ok");
   try {
     const response = await fetch("../api/sessions/cartLink", {
       method: "GET",
       credentials: "include",
     });
+
+    console.log(response);
 
     // Verifica si la respuesta es HTML en lugar de JSON
     const contentType = response.headers.get("content-type");

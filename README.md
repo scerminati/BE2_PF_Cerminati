@@ -179,69 +179,91 @@ El archivo `utils.js` contiene una serie de scripts y helpers diseñados para fa
 ## Estructura del Proyecto
 
 ```bash
-BE2-PF-Cerminati
-├── src/
-│   ├── config/
-│   │   └── passport.config.js  # Configuración de Passport para autenticación
-│   │
-│   ├── middleware/
-│   │   └── auth.js  # Middleware de autenticación
-│   │
-│   ├── models/
-│   │   ├── cartModel.js  # Modelo de datos para carritos
-│   │   ├── productModel.js  # Modelo de datos para productos
-│   │   └── user.model.js  # Modelo de datos para usuarios
-│   │
-│   ├── public/
-│   │   ├── images/  # Imágenes utilizadas en la aplicación
-│   │   ├── js/  # Scripts utilizados en el FrontEnd
-│   │   │   ├── cart.js  # Script para manejo del carrito
-│   │   │   ├── index.js  # Script para listado de productos
-│   │   │   ├── productDetail.js  # Script para detalles de producto
-│   │   │   ├── realtimeproducts.js  # Script para gestión de productos en modo Administrador
-│   │   │   └── utils.js  # Utilidades varias para el FrontEnd
-│   │   └── styles/
-│   │       └── styles.css  # Estilo principal de la aplicación
-│   │
-│   ├── router/
-│   │   ├── cart.router.js  # Rutas para carritos
-│   │   ├── products.router.js  # Rutas para productos
-│   │   ├── session.router.js  # Rutas para sesiones y autenticación
-│   │   └── views.router.js  # Rutas para vistas (handlebars)
-│   │
-│   ├── utils/
-│   │   ├── cartUtils.js  # Utilidades relacionadas con carritos
-│   │   ├── dirnameUtils.js  # Utilidad para manejo de __dirname
-│   │   ├── errorHandler.js  # Manejo de errores
-│   │   ├── handlebarsHelpers.js  # Helpers para Handlebars
-│   │   ├── multerUtils.js  # Configuración de Multer para subir archivos
-│   │   ├── passportUtils.js  # Utilidades para Passport
-│   │   ├── passwordUtils.js  # Utilidades para manejo de contraseñas
-│   │   ├── socketUtils.js  # Utilidades para Socket.io
-│   │   ├── utils.js  # Otras utilidades
-│   │   └── webTokenUtil.js  # Utilidad para manejo de Web Tokens
-│   │
-│   ├── views/
-│   │   ├── admin/
-│   │   │   └── realtimeproducts.hbs  # Plantilla para gestión de productos en modo Administrador
-│   │   ├── error/
-│   │   │   └── error.hbs  # Plantilla para mostrar errores
-│   │   ├── layouts/
-│   │   │   └── main.handlebars  # Plantilla base para vistas
-│   │   ├── products/
-│   │   │   └── productDetail.hbs  # Plantilla de detalle de producto
-│   │   ├── users/
-│   │   │   ├── cart.hbs  # Plantilla para manejo de carrito
-│   │   │   ├── login.hbs  # Plantilla para el inicio de sesión
-│   │   │   ├── profile.hbs  # Plantilla para el perfil del usuario
-│   │   │   └── register.hbs  # Plantilla para el registro de usuario
-│   │   └── index.hbs  # Plantilla para listado de productos
-│   │
-│   ├── app.js  # Archivo principal para iniciar la aplicación
-│
-├── .gitignore  # Archivos y carpetas a ignorar por Git
-├── package.json  # Archivo de configuración de dependencias
-└── README.md  # Archivo de documentación del proyecto
+ProyectoFinal
+├─ src
+│  ├─ config
+│  │  ├─ mail.config.js
+│  │  ├─ passport.config.js
+│  │  └─ persistence.config.js
+│  ├─ controllers
+│  │  ├─ carts.controllers.js
+│  │  ├─ products.controllers.js
+│  │  ├─ sessions.controller.js
+│  │  ├─ tickets.controller.js
+│  │  ├─ users.controllers.js
+│  │  └─ views.controllers.js
+│  ├─ DAO
+│  │  ├─ DTO
+│  │  │  └─ user.DTO.js
+│  │  ├─ Mongo
+│  │  │  ├─ DAO
+│  │  │  │  ├─ CartsMongoDAO.js
+│  │  │  │  ├─ ProductsMongoDAO.js
+│  │  │  │  ├─ TicketsMongoDAO.js
+│  │  │  │  └─ UsersMongoDAO.js
+│  │  │  └─ models
+│  │  │     ├─ carts.model.js
+│  │  │     ├─ products.model.js
+│  │  │     ├─ ticket.model.js
+│  │  │     └─ user.model.js
+│  │  ├─ repositories
+│  │  │  ├─ cartsRepository.js
+│  │  │  ├─ productsRepository.js
+│  │  │  ├─ ticketRepository.js
+│  │  │  └─ usersRepository.js
+│  │  └─ DAOFactory.js
+│  ├─ middleware
+│  │  ├─ auth.js
+│  │  └─ errorHandler.js
+│  ├─ public
+│  │  ├─ images
+│  │  ├─ js
+│  │  └─ styles
+│  ├─ router
+│  │  ├─ cart.router.js
+│  │  ├─ products.router.js
+│  │  ├─ session.router.js
+│  │  ├─ tickets.router.js
+│  │  ├─ users.router.js
+│  │  └─ views.router.js
+│  ├─ services
+│  │  ├─ cart.services.js
+│  │  ├─ products.services.js
+│  │  ├─ session.service.js
+│  │  ├─ tickets.services.js
+│  │  └─ users.services.js
+│  ├─ utils
+│  │  ├─ database
+│  │  │  └─ multerUtils.js
+│  │  ├─ main
+│  │  │  ├─ dirnameUtils.js
+│  │  │  ├─ errorUtils.js
+│  │  │  ├─ handlebarsHelpers.js
+│  │  │  └─ socketUtils.js
+│  │  └─ session
+│  │     ├─ mailUtils.js
+│  │     └─ webTokenUtil.js
+│  ├─ views
+│  │  ├─ admin
+│  │  │  ├─ realtimeproducts.hbs
+│  │  │  └─ realtimeusers.hbs
+│  │  ├─ error
+│  │  │  └─ error.hbs
+│  │  ├─ layouts
+│  │  │  └─ main.handlebars
+│  │  ├─ products
+│  │  │  └─ productDetail.hbs
+│  │  ├─ users
+│  │  │  ├─ cart.hbs
+│  │  │  ├─ login.hbs
+│  │  │  ├─ profile.hbs
+│  │  │  └─ register.hbs
+│  │  └─ index.hbs
+│  └─ app.js
+├─ package-lock.json
+├─ package.json
+└─ README.md
+
 
 ```
 

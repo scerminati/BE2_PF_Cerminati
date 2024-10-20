@@ -91,6 +91,10 @@ export const logoutUserController = async (req, res, next) => {
 };
 
 export const checkoutCartController = async (req, res, next) => {
+  const idCarrito = req.params.cid;
+  if (!idCarrito || idCarrito.length !== 24) {
+    return next(new ValidationError("ID de carrito inválido."));
+  }
   let idUser;
   if (!req.user) {
     return next(new ValidationError("ID usuario inválido."));
@@ -102,7 +106,7 @@ export const checkoutCartController = async (req, res, next) => {
   }
 
   try {
-    let ticket = await checkoutService(idUser);
+    let ticket = await checkoutService(idUser, idCarrito);
 
     return res
       .status(200)

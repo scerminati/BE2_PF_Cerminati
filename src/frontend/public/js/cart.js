@@ -23,9 +23,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
       const response = await fetch(`/api/carts/${cartId}`);
       if (response.ok) {
-        let { payload: carrito } = await response.json();
+        const carrito = await response.json();
 
-        if (carrito.products.length > 0) {
+        if (carrito.carritoEncontrado.products.length > 0) {
           // Elementos del DOM
           const cartList = document.getElementById("listado");
           const clearCartBtn = document.getElementById("clearCart");
@@ -48,8 +48,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
-              let { payload: updatedCart } = await response.json();
-
+              const updatedCart = await response.json();
               socket.emit("Cart Update", updatedCart);
               carritoVacio();
               tostada("Carrito vacío, todos los productos eliminados");
@@ -66,20 +65,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             tostada("Procesando compra...");
 
             try {
-              const response = await fetch(
-                `../api/sessions/${cartId}/checkout`,
-                {
-                  method: "POST",
-                  credentials: "include",
-                }
-              );
+              const response = await fetch("../api/sessions/checkout", {
+                method: "POST",
+                credentials: "include",
+              });
 
               if (!response.ok) {
                 throw new Error("Error al procesar la compra");
               }
 
-              let { msg: data } = await response.json();
-              tostada(data);
+              const data = await response.json();
+              tostada(data.msg);
 
               setTimeout(() => {
                 carritoVacio();
@@ -103,27 +99,29 @@ document.addEventListener("DOMContentLoaded", async function () {
               cart.products.forEach((product) => {
                 const productElement = document.createElement("div");
                 productElement.classList.add("productoBox");
-                productElement.innerHTML = `<h3 class="flex1c">${product.product.title}</h3>
-            <p class="flex2c">Precio: $${product.product.price}</p>
+                productElement.innerHTML = `<h3 class="flex1c">${
+                  product.title
+                }</h3>
+            <p class="flex2c">Precio: $${product.price}</p>
             <p class="flex2c">Cantidad: ${product.quantity}</p>
-            <p class="flex2c">Stock Disponible:  ${product.product.stock}</p>
+            <p class="flex2c">Stock: ${product.stock}</p>
 
             <input
               type="number"
               name="quantity"
               min="1"
-              max="${product.product.stock}"
+              max="${product.stock + product.quantity}"
               value="${product.quantity}"
               class="flex3c"
-              data-product-id="${product.product._id}"
+              data-product-id="${product._id}"
             />
             <button
               class="flex4c btn-update"
-              data-product-idu="${product.product._id}"
+              data-product-idu="${product._id}"
             >Actualizar</button>
             <button
               class="flex4c btn-remove"
-              data-product-idr="${product.product._id}"
+              data-product-idr="${product._id}"
             >Eliminar</button>    `;
                 cartList.appendChild(productElement);
               });
@@ -132,8 +130,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               if (totalPriceElement) {
                 const totalPrice = cart.products
                   .reduce(
-                    (acc, product) =>
-                      acc + product.product.price * product.quantity,
+                    (acc, product) => acc + product.price * product.quantity,
                     0
                   )
                   .toFixed(2);
@@ -176,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                let { payload: updatedCart } = await response.json();
+                const updatedCart = await response.json();
                 tostada("Cantidad de producto actualizado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {
@@ -190,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             //Evento de eliminación de producto.
             if (event.target.classList.contains("btn-remove")) {
               const productId = event.target.getAttribute("data-product-idr");
-              console.log(productId);
+
               try {
                 const response = await fetch(
                   `
@@ -204,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                let { payload: updatedCart } = await response.json();
+                const updatedCart = await response.json();
                 tostada("Producto Eliminado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {

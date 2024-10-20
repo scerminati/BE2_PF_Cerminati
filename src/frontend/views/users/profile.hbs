@@ -1,0 +1,21 @@
+<h1>Perfil del usuario</h1>
+
+<p>Nombre: {{user.first_name}} {{user.last_name}}</p>
+<p>Email: {{user.email}}</p>
+<p>Edad: {{user.age}}</p>
+<form action="/api/sessions/logout" method="POST">
+  <div class="center">
+    <button type="submit">Cerrar Sesión</button>
+    <a href="/"><button type="button">Volver al inicio</button></a>
+  </div>
+</form>
+
+{{#if (eq user.role "admin")}}
+  <br /><hr /><br />
+  <h3>Opciones de Administrador</h3>
+  <div class="center">
+    <a href="/realtimeproducts">
+      <button>Modificar Productos</button>
+    </a>
+  </div>
+{{/if}}
