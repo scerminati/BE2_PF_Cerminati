@@ -4,7 +4,6 @@ import {
   makeUserService,
 } from "../services/users.services.js";
 
-import { socketServer } from "../app.js";
 import { emitUserChange } from "../utils/main/socketUtils.js";
 
 export const getAllUsersController = async (req, res, next) => {
@@ -25,7 +24,7 @@ export const getAllUsersController = async (req, res, next) => {
   }
 };
 
-export const makeAdmin = async (req, res, next) => {
+export const makeAdminController = async (req, res, next) => {
   const idUser = req.params.uid;
 
   if (!idUser || idUser.length !== 24) {
@@ -45,7 +44,7 @@ export const makeAdmin = async (req, res, next) => {
   }
 };
 
-export const makeUser = async (req, res, next) => {
+export const makeUserController = async (req, res, next) => {
   const idUser = req.params.uid;
   if (!idUser || idUser.length !== 24) {
     return next(new ValidationError("ID usuario inválido."));

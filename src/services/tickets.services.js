@@ -45,7 +45,6 @@ export const getTicketFromUserService = async (id) => {
 };
 
 export const createTicketService = async (idUser, prods, amount) => {
-  await getUserByIdService(idUser);
 
   let ticket = {
     code: await generateUniqueTicketCode(),

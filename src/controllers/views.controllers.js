@@ -1,11 +1,17 @@
-import { getCartService } from "../services/cart.services.js";
+import {
+  getCartService,
+  getVirtualStockService,
+} from "../services/cart.services.js";
 import {
   getAllProductsService,
   getCategoriesProductsService,
   getProductService,
   paginateProductsService,
 } from "../services/products.services.js";
+
 import { getAllUsersService } from "../services/users.services.js";
+
+import { ValidationError } from "../utils/main/errorUtils.js";
 
 export const viewsPaginateController = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -44,7 +50,7 @@ export const viewsPaginateController = async (req, res, next) => {
     result.sort = sort;
     result.category = category;
     result.categories = allCategories;
-    // Construir los enlaces con encodeURIComponent
+
     result.prevLink = result.hasPrevPage
       ? `/?page=${result.prevPage}${limit < 10 ? `&limit=${limit}` : ""}${
           sort ? `&sort=${encodeURIComponent(sort)}` : ""
@@ -71,18 +77,16 @@ export const viewsPaginateController = async (req, res, next) => {
 
 export const viewsProductController = async (req, res, next) => {
   const idProduct = req.params.pid;
+  if (!idProduct || idProduct.length !== 24) {
+    return next(new ValidationError("ID de producto inválido."));
+  }
+
   try {
     const product = await getProductService(idProduct);
 
-    if (product) {
-      res.render("products/productDetail", {
-        product,
-      });
-    } else {
-      return res
-        .status(404)
-        .render("error/error", { msg: "Producto no encontrado." });
-    }
+    res.render("products/productDetail", {
+      product,
+    });
   } catch (error) {
     next(error);
   }
@@ -90,14 +94,12 @@ export const viewsProductController = async (req, res, next) => {
 
 export const viewsCartController = async (req, res, next) => {
   const cartId = req.params.cid;
-  try {
-    let carritoEncontrado = await getCart(cartId);
+  if (!cartId || cartId.length !== 24) {
+    return next(new ValidationError("ID de carrito inválido."));
+  }
 
-    if (!carritoEncontrado) {
-      return res
-        .status(404)
-        .render("error/error", { msg: "Carrito no encontrado." });
-    }
+  try {
+    let carritoEncontrado = await getCartService(cartId);
 
     let totalPrice = carritoEncontrado.products.reduce((acc, products) => {
       return acc + products.product.price * products.quantity;
@@ -110,7 +112,6 @@ export const viewsCartController = async (req, res, next) => {
       totalPrice,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -123,7 +124,6 @@ export const viewsRTPController = async (req, res, next) => {
       products,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -153,39 +153,14 @@ export const viewsProfileController = async (req, res, next) => {
 
 //esto a corregir
 async function getSessionStock(req, prod) {
-  const cartId = req.user.cart;
-  let cart;
-
-  try {
-    if (cartId) {
-      cart = await getCartService(cartId);
-
-      if (!cart) {
-        // En lugar de enviar una respuesta, lanza un error o retorna un estado
-        throw new Error("Carrito no encontrado");
-      }
-
-      const cartProducts = cart.products;
-
-      prod.forEach((product) => {
-        const cartProduct = cartProducts.find(
-          (cartItem) =>
-            cartItem.product._id.toString() === product._id.toString()
-        );
-
-        if (cartProduct) {
-          const newStock = product.stock - cartProduct.quantity;
-          product.stock = newStock >= 0 ? newStock : 0;
-          if (product.stock === 0) {
-            product.status = false;
-          }
-        }
-      });
-      return prod;
-    }
-    return false;
-  } catch (error) {
-    console.error(error.message);
-    return false;
+  let cartId;
+  if (!req.user) {
+    return null;
   }
+  cartId = req.user.cart;
+  if (!cartId || cartId.length !== 24) {
+    return null;
+  }
+
+  return await getVirtualStockService(cartId, prod);
 }

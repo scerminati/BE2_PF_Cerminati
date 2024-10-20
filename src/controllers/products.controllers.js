@@ -8,7 +8,10 @@ import {
 
 import { BadRequestError, ValidationError } from "../utils/main/errorUtils.js";
 
-import { emitProductDelete, emitProductUpdate } from "../utils/main/socketUtils.js";
+import {
+  emitProductDelete,
+  emitProductUpdate,
+} from "../utils/main/socketUtils.js";
 
 export const getAllProductsController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);
@@ -112,7 +115,7 @@ export const createProductController = async (req, res, next) => {
 
     newProduct = await createProductService(newProduct);
 
-    emitProductUpdate(newProduct)
+    emitProductUpdate(newProduct);
 
     res.status(201).json({
       msg: `Producto agregado exitosamente con id ${newProduct._id}`,
@@ -147,8 +150,7 @@ export const editProductController = async (req, res, next) => {
   try {
     const updatedProduct = await editProductService(idProducto, updateData);
 
-    
-    emitProductUpdate(updatedProduct)
+    emitProductUpdate(updatedProduct);
 
     return res.status(200).json({
       msg: `Producto modificado correctamente en el id ${idProducto}`,
@@ -168,7 +170,7 @@ export const deleteProductController = async (req, res, next) => {
   try {
     const deletedProduct = await deleteProductService(idProducto);
 
-    emitProductDelete(deletedProduct)
+    emitProductDelete(deletedProduct);
 
     return res.status(200).json({
       msg: `Se eliminó el producto con id ${idProducto}`,

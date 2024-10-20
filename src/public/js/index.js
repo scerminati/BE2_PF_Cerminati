@@ -20,16 +20,6 @@ socket.on("Cart Update", (updatedCart) => {
 });
 
 // Función para actualizar el enlace del carrito
-const updateCartLink = async () => {
-  const cartId = await getCartId();
-  if (cartId) {
-    const cartLink = document.getElementById("cartLink");
-    cartLink.href = `/carts/${cartId}`;
-    getQT();
-  } else {
-    cartLink.href = `/login`;
-  }
-};
 
 // Función para agregar un producto al carrito
 const addToCart = async (productId) => {
@@ -89,7 +79,7 @@ socket.on("Product Update", (updatedProduct) => {
 
 // Añadir eventos a los botones de "Agregar al Carrito"
 document.addEventListener("DOMContentLoaded", () => {
-  updateCartLink();
+  updateLink();
 
   document.querySelectorAll(".add-to-cart").forEach((button) => {
     button.addEventListener("click", () => {

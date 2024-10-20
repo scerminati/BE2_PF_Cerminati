@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             //Evento de eliminación de producto.
             if (event.target.classList.contains("btn-remove")) {
               const productId = event.target.getAttribute("data-product-idr");
-
+              console.log(productId);
               try {
                 const response = await fetch(
                   `

@@ -27,7 +27,7 @@ export const getAllCartsService = async (limit) => {
 
 export const getCartService = async (id) => {
   let cart = await cartService.getCart(id);
-
+  console.log(cart);
   if (!cart) {
     throw new NotFoundError(`El carrito con id ${id} no exite`);
   }
@@ -36,18 +36,20 @@ export const getCartService = async (id) => {
 };
 
 export const getCartQTService = async (id) => {
-  let cart = await getCartService(id);
+  let cart = await cartService.getCart(id);
 
-  let cartQT = cart.products.reduce(
-    (total, product) => total + product.quantity,
-    0
-  );
+  let cartQT;
+  if (cart) {
+    cartQT = cart.products.reduce(
+      (total, product) => total + product.quantity,
+      0
+    );
+  }
   return cartQT ? cartQT : 0;
 };
 
 export const createCartService = async () => {
-  let nextIdC = await cartService.nextIdC();
-  let data = { id: nextIdC, products: [] };
+  let data = { products: [] };
 
   let cart = await cartService.createCart(data);
 
@@ -131,6 +133,27 @@ export const deleteProductInCartService = async (id, prod) => {
   return await populateCartService(newCart);
 };
 
+export const getVirtualStockService = async (id, prod) => {
+  let cart = getCartService(id);
+  let cartProducts = cart.products;
+
+  prod.forEach((product) => {
+    const cartProduct = cartProducts.find(
+      (cartItem) => cartItem.product._id.toString() === product._id.toString()
+    );
+
+    if (cartProduct) {
+      const newStock = product.stock - cartProduct.quantity;
+      product.stock = newStock >= 0 ? newStock : 0;
+      if (product.stock === 0) {
+        product.status = false;
+      }
+    }
+  });
+
+  return prod;
+};
+
 const populateCartService = async (cart) => {
   let cartsPopulate = await cartService.populateCart(cart);
 
@@ -139,4 +162,32 @@ const populateCartService = async (cart) => {
   }
 
   return cartsPopulate;
+};
+
+export const pushProductInCartService = async (id, prod, qty) => {
+  let cart = await getCartService(id);
+  let product = await getProductService(prod);
+
+  product.stock -= qty;
+  if (product.stock < 0) {
+    product.stock = 0;
+  }
+
+  cart.products.push({ product: prod, quantity: qty });
+
+  if (product.stock <= 0) {
+    product.status = false;
+  }
+
+  let cartEdited = await cartService.editCart(id, cart.products);
+  if (!cartEdited) {
+    throw new InternalServerError(
+      `Error al transferir los productos al carrito con id ${id}`
+    );
+  }
+
+  return {
+    cartUpdated: await populateCartService(cartEdited),
+    productVirtual: product,
+  };
 };

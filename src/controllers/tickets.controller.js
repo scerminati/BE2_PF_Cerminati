@@ -4,7 +4,7 @@ import {
   getTicketService,
 } from "../services/tickets.services.js";
 
-import { socketServer } from "../app.js";
+
 
 export const getAllTicketsController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);

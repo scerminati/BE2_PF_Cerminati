@@ -26,14 +26,14 @@ export const passportCall = (strategy) => {
 export const isNotAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      return next(new InternalServerError(err));
+      //return next(new InternalServerError(err));
+      return next(err);
     }
     if (!user) {
       // Si el usuario no está autenticado, permite el acceso a la ruta
       return next();
     }
 
-    // Si el usuario ya está autenticado, redirige al perfil
     return res.redirect("/profile");
   })(req, res, next);
 };
@@ -42,14 +42,14 @@ export const isNotAuthenticated = (req, res, next) => {
 export const isAuthenticated = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     if (err) {
-      return next(new InternalServerError(err));
+
+      return next(err);
     }
     if (!user) {
-      // Si el usuario no está autenticado, redirige al login
+
       return res.redirect("/login");
     }
-
-    // Si el usuario está autenticado, continúa
+  
     req.user = user;
     next();
   })(req, res, next);
@@ -63,19 +63,14 @@ export const navigate = (req, res, next) => {
     if (user) {
       req.user = user;
     } else {
-      req.user = "";
+      req.user = null;
     }
-
     next();
   })(req, res, next);
 };
 
 // Middleware para verificar si el usuario es administrador
 export const isAdmin = (req, res, next) => {
-  // Asegúrate de que el usuario esté autenticado
-  if (!req.user) {
-    return res.redirect("/login"); // Redirige al login si no está autenticado
-  }
   // Verifica si el rol del usuario es admin
   if (req.user.role !== "admin") {
     return next(
@@ -90,9 +85,6 @@ export const isAdmin = (req, res, next) => {
 // Middleware para verificar acceso al carrito del usuario
 export const isUserCart = (req, res, next) => {
   const { cid } = req.params;
-  if (!req.user) {
-    return res.redirect("/login"); // Redirige al login si no está autenticado
-  }
 
   if (req.user.cart.toString() !== cid) {
     return next(new AuthorizationError("Acceso denegado a este carrito"));

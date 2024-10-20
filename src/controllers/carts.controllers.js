@@ -34,6 +34,7 @@ export const getAllCartsController = async (req, res, next) => {
 };
 
 export const getCartController = async (req, res, next) => {
+
   const idCarrito = req.params.cid;
 
   if (!idCarrito || idCarrito.length !== 24) {
@@ -54,7 +55,11 @@ export const getCartController = async (req, res, next) => {
 export const getCartQTController = async (req, res, next) => {
   const idCarrito = req.params.cid;
 
+  if (!idCarrito || idCarrito.length !== 24) {
+    return res.json({ payload: 0 });
+  }
   try {
+
     let QT = await getCartQTService(idCarrito);
 
     if (QT === null) {
@@ -90,7 +95,9 @@ export const editProductInCartController = async (req, res, next) => {
   if (!idProducto || idProducto.length !== 24) {
     return next(new ValidationError("ID de producto inválido."));
   }
-  let quantity = parseInt(req.body.quantity) > 0 || null;
+  let quantity = parseInt(req.body.quantity) || null;
+
+  
 
   try {
     const { cartUpdated, productVirtual } = await editProductInCartService(
@@ -142,7 +149,7 @@ export const deleteProductInCartController = async (req, res, next) => {
   }
 
   try {
-    let cartModified = await deleteProductInCartService(idCarrito);
+    let cartModified = await deleteProductInCartService(idCarrito, idProducto);
 
     emitCartUpdate(cartModified);
 

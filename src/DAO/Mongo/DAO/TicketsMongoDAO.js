@@ -2,7 +2,7 @@ import ticketModel from "../models/ticket.model.js";
 
 export default class TicketsMongoDAO {
   find = async () => {
-    return await ticketModel.find({});
+    return await ticketModel.find({}).sort({ purchase_datetime: -1 });
   };
 
   findById = async (id) => {
@@ -21,4 +21,7 @@ export default class TicketsMongoDAO {
 
   populate = async (id) => {};
 
+  code = async (code) => {
+    return await ticketModel.findOne({ code: code });
+  };
 }

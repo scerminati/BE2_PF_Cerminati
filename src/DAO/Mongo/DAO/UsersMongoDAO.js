@@ -1,7 +1,6 @@
 import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
-import UserDTO from "../../DTO/user.DTO.js";
 
 export default class UsersMongoDAO {
   find = async () => {

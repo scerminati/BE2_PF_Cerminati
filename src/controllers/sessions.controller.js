@@ -1,21 +1,24 @@
 import {
-  checkoutService,
   getCurrentLoggedUserService,
   loginUserService,
   registerUserService,
+  cartLinkUpdateService,
 } from "../services/users.services.js";
+import { checkoutService } from "../services/session.service.js";
 
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
 import { emitUserChange } from "../utils/main/socketUtils.js";
-import {
-  BadRequestError,
-  ValidationError,
-} from "../utils/main/errorUtils.js";
+import { BadRequestError, ValidationError } from "../utils/main/errorUtils.js";
 
 export const getLoggedUserController = async (req, res, next) => {
-  const userId = req.user._id;
-  if (!userId) {
+  let userId;
+  if (!req.user) {
+    return next(new ValidationError("ID usuario inválido."));
+  }
+  userId = req.user._id;
+
+  if (!userId || userId.toString().length !== 24) {
     return next(new ValidationError("ID usuario inválido."));
   }
 
@@ -49,7 +52,7 @@ export const registerUserController = async (req, res, next) => {
     console.log(
       "Usuario creado exitosamente:",
       createdUser,
-      `y nuevo carrito creado para el usuario con id ${newCart._id}`
+      `y nuevo carrito creado para el usuario con id ${createdUser.cart}`
     );
 
     emitUserChange(createdUser);
@@ -93,16 +96,43 @@ export const logoutUserController = async (req, res, next) => {
 };
 
 export const checkoutCartController = async (req, res, next) => {
-  const idUser = req.params.uid;
-  if (!idUser || idUser.length !== 24) {
+  let idUser;
+  if (!req.user) {
+    return next(new ValidationError("ID usuario inválido."));
+  }
+  idUser = req.user._id;
+
+  if (!idUser || idUser.toString().length !== 24) {
     return next(new ValidationError("ID usuario inválido."));
   }
 
   try {
-    const user = await checkoutService(idUser);
+    let ticket = await checkoutService(idUser);
 
-    return res.status(200).send({ msg: "Compra realizada exitosamente" });
+    return res
+      .status(200)
+      .send({ msg: "Compra realizada exitosamente", payload: ticket });
   } catch (error) {
     next(error);
   }
+};
+
+export const cartLinkUpdateController = async (req, res) => {
+  let idUser;
+  if (req.user) {
+    idUser = req.user._id;
+    if (!idUser) {
+      return null;
+    }
+
+    let userCartId = await cartLinkUpdateService(idUser);
+    if (!userCartId) {
+      return null;
+    } else {
+      return res
+        .status(200)
+        .json({ msg: "Carrito encontrado", payload: userCartId });
+    }
+  }
+  return null;
 };

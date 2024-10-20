@@ -23,7 +23,6 @@ export default class CartsMongoDAO {
     );
   };
 
-
   populate = async (cartpopulate) => {
     try {
       const cartsArray = Array.isArray(cartpopulate)
@@ -40,8 +39,8 @@ export default class CartsMongoDAO {
           let response = {
             ...populatedCart.toObject(),
             products: populatedCart.products.map((product) => ({
-              product: product.product, // Mantiene todo el objeto del producto
-              quantity: product.quantity, // Extrae la cantidad
+              product: product.product,
+              quantity: product.quantity,
             })),
           };
           return response;
@@ -49,16 +48,6 @@ export default class CartsMongoDAO {
       );
 
       return populatedCarts.length === 1 ? populatedCarts[0] : populatedCarts;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  nextId = async () => {
-    try {
-      const lastCart = await cartsModel.findOne({}, {}, { sort: { id: -1 } });
-      return lastCart ? lastCart.id + 1 : 1;
     } catch (error) {
       console.error(error);
       throw error;

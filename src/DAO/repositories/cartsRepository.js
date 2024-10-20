@@ -21,8 +21,4 @@ export default class CartsRepository {
   async populateCart(cart) {
     return await this.dao.populate(cart);
   }
-
-  async nextIdC() {
-    return await this.dao.nextIdC();
-  }
 }

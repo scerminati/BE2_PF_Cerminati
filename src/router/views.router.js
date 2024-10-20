@@ -27,10 +27,7 @@ router.get("/products/:pid", navigate, viewsProductController);
 
 router.get("/carts/:cid", isAuthenticated, isUserCart, viewsCartController);
 
-router.get(
-  "/realtimeproducts",
-  isAuthenticated, isAdmin, viewsRTPController
-);
+router.get("/realtimeproducts", isAuthenticated, isAdmin, viewsRTPController);
 router.get("/realtimeusers", isAuthenticated, isAdmin, viewsRTUController);
 router.get("/realtimeticket", isAuthenticated, isAdmin, viewsRTTController);
 

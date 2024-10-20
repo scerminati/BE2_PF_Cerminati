@@ -79,16 +79,8 @@ const addToCart = async (cartId, productId, quantity) => {
 
 // Función para manejar la carga de la página de detalles
 document.addEventListener("DOMContentLoaded", async function () {
-  const cartId = await getCartId();
-  if (cartId) {
-    const cartLink = document.getElementById("cartLink");
-    cartLink.href = `/carts/${cartId}`;
-  }
-
-  const cartCount = document.getElementById("cartCount");
-  if (cartCount) {
-    getQT();
-  }
+  // Función para actualizar el enlace del carrito
+  updateLink();
 
   // Escuchar actualizaciones de productos desde el servidor
   socket.on("Cart Update", (updatedCart) => {

@@ -3,20 +3,13 @@ import { UsersDAO } from "../DAO/DAOFactory.js";
 
 import UserDTO from "../DAO/DTO/user.DTO.js";
 
-import {
-  getCartService,
-  editProductInCartService,
-  createCartService,
-} from "./cart.services.js";
-import { editProductService } from "./products.services.js";
-import { createTicketService } from "./tickets.services.js";
+import { createCartService } from "./cart.services.js";
+
 import {
   AuthenticationError,
   ConflictError,
-  InsufficientStockError,
   InternalServerError,
   NotFoundError,
-  ValidationError,
 } from "../utils/main/errorUtils.js";
 
 const userService = new UsersRepository(UsersDAO);
@@ -87,7 +80,7 @@ export const getCurrentLoggedUserService = async (id) => {
 };
 
 export const registerUserService = async (data) => {
-  let user = await getUserByEmailService(data.email);
+  let user = await userService.getUserByEmail(data.email);
   if (user) {
     throw new ConflictError(`El correo electrónico ya está en uso.`);
   }
@@ -121,55 +114,15 @@ export const loginUserService = async (email, password) => {
   return new UserDTO(user);
 };
 
-export const checkoutService = async (userId) => {
-  let user = await getCurrentLoggedUserService(userId);
-  let userCart = await getCartService(user.cart);
+export const cartLinkUpdateService = async (id) => {
+  let user = await userService.getUserById(id);
+  if (!user) {
+    return null;
+  } else return user.cart._id;
+};
 
-  if (!userCart || userCart.products.length === 0) {
-    throw new ValidationError(
-      `No se puede realizar el checkout, carrito vacío`
-    );
-  }
-
-  let futureCart = [];
-  let currentPurchase = [];
-  let newProductPurchase;
-
-  for (const item of userCart.products) {
-    const productId = item.product._id;
-    const quantityRequested = item.quantity;
-
-    const product = await getProductByIdService(productId);
-
-    if (quantityRequested > product.stock) {
-      futureCart.push(item);
-    } else {
-      const newStock = product.stock - quantityRequested;
-      await editProductService(productId, { stock: newStock });
-      newProductPurchase = {
-        title: product.title,
-        quantity: quantityRequested,
-        price: product.price,
-        totalProduct: product.price * quantityRequested,
-      };
-      currentPurchase.push(newProductPurchase);
-    }
-  }
-
-  if (currentPurchase.length == 0) {
-    throw new InsufficientStockError(
-      `No se puede realizar la compra, los productos dentro del carrito no tienen stock.`
-    );
-  }
-  const totalPrice = currentPurchase.reduce((total, item) => {
-    return total + item.totalProduct;
-  }, 0);
-  let ticket = await createTicketService(userId, currentPurchase, totalPrice);
-
-  ///MAILING
-
-  let newCart = await createCartService();
-  let newUserCart = await userService.updateUserCart(newCart._id);
+export const updateUserCartService = async (userId, cartId) => {
+  let newUserCart = await userService.updateUserCart(userId, cartId);
 
   if (!newUserCart) {
     throw new InternalServerError(
@@ -177,13 +130,5 @@ export const checkoutService = async (userId) => {
     );
   }
 
-  if (futureCart.length > 0) {
-    for (const item of futureCart) {
-      const { product, quantity } = item;
-
-      await editProductInCartService(user.cart, product._id, quantity);
-    }
-  }
-
-  return "sucess";
+  return newUserCart
 };
