@@ -34,7 +34,7 @@ export async function emailBody(user, products, amount, code) {
               online. La compra ha sido exitosa y la estamos procesando. A continuación están los detalles de tu compra.
             </p>
     
-            <h2>Ticket Number - ${code}</h2>
+            <h3>Ticket Number - ${code}</h3>
     
             <table style="width: 100%; border-collapse: collapse; margin: 0 auto;">
               <thead>
