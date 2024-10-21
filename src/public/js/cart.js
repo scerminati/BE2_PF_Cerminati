@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async function () {
               });
 
               if (!response.ok) {
-                tostada("Error en la respuesta del servidor.");
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
@@ -77,20 +76,20 @@ document.addEventListener("DOMContentLoaded", async function () {
               );
 
               if (!response.ok) {
-                tostada("Error en la respuesta del servidor.");
-                throw new Error("Error al procesar la compra");
+                throw new Error(`Error al procesar la compra.`);
               }
 
-              let { msg: data } = await response.json();
+              let { msg: data, payload: futureProduct } = await response.json();
               tostada(data);
 
+              futureProduct && tostada(futureProduct);
               carritoVacio();
 
               setTimeout(() => {
                 window.location.href = "/";
               }, 2000);
             } catch (error) {
-              tostada("Error en el Servidor.");
+              tostada(error.message);
               console.error("Error al procesar el checkout:", error.message);
             }
           });
@@ -176,7 +175,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
-                  tostada("Error en la respuesta del servidor.");
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
@@ -206,7 +204,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
-                  tostada("Error en la respuesta del servidor.");
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 

@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
-          tostada("Error en la respuesta del servidor.")
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -66,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
-          tostada("Error en la respuesta del servidor.")
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 

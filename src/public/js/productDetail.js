@@ -36,7 +36,6 @@ const isProductInCart = async (cartId, productId) => {
       const { payload: cart } = await response.json();
       return cart.products.some((product) => product.product._id === productId);
     } else {
-      tostada("Error en la respuesta del servidor.")
       throw new Error("No se pudo obtener el carrito.");
     }
   } catch (error) {
@@ -65,7 +64,6 @@ const addToCart = async (cartId, productId, quantity) => {
       tostada("Producto agregado al carrito");
       socket.emit("Product Update", productId);
     } else {
-      tostada("Error en la respuesta del servidor.")
       throw new Error("No se pudo agregar el producto al carrito");
     }
   } catch (error) {

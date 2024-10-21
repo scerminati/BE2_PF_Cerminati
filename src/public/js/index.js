@@ -38,7 +38,6 @@ const addToCart = async (productId) => {
         tostada("Producto agregado al carrito.");
         socket.emit("Product Update", productId);
       } else {
-        tostada("Error en la respuesta del servidor.");
         throw new Error("No se pudo agregar el producto al carrito");
       }
     } catch (error) {

@@ -80,6 +80,8 @@ export const checkoutService = async (userId) => {
 
         await pushProductInCartService(newCart, product._id, quantity);
       }
+      ticket.message =
+        "Algunos elemenos no pudieron ser procesados, recibirás un correo al respecto.";
     }
 
     if (!user.email) {
@@ -87,11 +89,13 @@ export const checkoutService = async (userId) => {
         "El correo electrónico del usuario no está definido."
       );
     }
+    console.log(futureCart);
     const mailOptions = await emailBody(
       user,
       currentPurchase,
       totalPrice,
-      ticket.code
+      ticket.code,
+      futureCart
     );
     await sendEmail(mailOptions);
 
