@@ -20,7 +20,6 @@ export const getAllTicketsService = async (limit) => {
   if (!isNaN(limit) && limit > 0) {
     tickets = tickets.slice(0, limit);
   }
-  console.log("ok");
   return await populateTicketService(tickets);
 };
 
@@ -38,7 +37,6 @@ export const getTicketFromUserService = async (id) => {
   let tickets = await ticketService.getTicketsFromUser(id);
 
   if (!tickets || tickets.length === 0) {
-    console.log(`No se encontraron tickets para el usuario con id ${id}`);
     return null;
   }
   return await populateTicketService(tickets);

@@ -6,6 +6,8 @@ import {
 } from "../services/tickets.services.js";
 import { emitTicketChange } from "../utils/main/socketUtils.js";
 
+import { ValidationError } from "../utils/main/errorUtils.js";
+
 export const getAllTicketsController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);
   try {
@@ -23,7 +25,7 @@ export const getAllTicketsController = async (req, res, next) => {
   }
 };
 export const getTicketController = async (req, res, next) => {
-  const idTicket = req.params.cid;
+  const idTicket = req.params.tid;
 
   if (!idTicket || idTicket.length !== 24) {
     return next(new ValidationError("ID de ticket inválido."));

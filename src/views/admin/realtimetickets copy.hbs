@@ -1,0 +1,57 @@
+<div>
+  <h1>Realtime Dashboard</h1>
+  <p>Vista de Administrador.</p>
+  <br />
+  <div class="center">
+    <a href="/"><button>Volver al inicio</button></a></div>
+  <br />
+  <div id="listProd"><h2>Listado de Pedidos</h2>
+    <div class="listado"><div id="listado">
+        {{#each tickets}}
+          <div id="{{this._id}}" class="productoBox">
+            <p class="flex2u">
+              Código:
+              {{this.code}}
+            </p>
+            <p class="flex5u">Usuario: {{this.user.email}}</p>
+            <p class="flex2u">
+              Fecha de Pedido:
+              {{this.readableDate}}
+            </p>
+            <p class="flex3u">
+              Total: ${{this.amount}}
+            </p>
+            <p class="flex6u">Estado: {{this.status}}</p>
+
+            <button
+              type="button"
+              class="btn-user flex6u"
+              data-user-id="{{this._id}}"
+            >Administrar Pedido</button>
+
+          </div>
+        {{/each}}
+      </div></div></div>
+</div>
+
+  <div id="orderDetails" style="display: none; margin-top: 20px;">
+    <h3>Detalles del Pedido</h3>
+    <p><strong>Código:</strong> <span id="detailCode"></span></p>
+    <p><strong>Usuario:</strong> <span id="detailUser"></span></p>
+    <p><strong>Fecha de Pedido:</strong> <span id="detailDate"></span></p>
+    <p><strong>Total:</strong> $<span id="detailAmount"></span></p>
+    <p><strong>Estado:</strong> <span id="detailStatus"></span></p>
+
+    <label for="statusSelect">Cambiar estado:</label>
+    <select id="statusSelect">
+      <option value="pending">Pendiente</option>
+      <option value="shipped">Enviado</option>
+      <option value="delivered">Entregado</option>
+      <option value="canceled">Cancelado</option>
+    </select>
+    <button id="updateStatusButton">Actualizar Estado</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realtimetickets.js"></script>

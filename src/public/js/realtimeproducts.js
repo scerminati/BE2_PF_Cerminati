@@ -11,7 +11,7 @@ socket.on("disconnect", () => {
 });
 
 // Esperar a que el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   // Elementos del DOM
   const productList = document.getElementById("listado");
   const productForm = document.getElementById("productForm");
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Escuchar evento de actualización de producto
   socket.on("Product Update", (updatedProduct) => {
-    //console.log("Producto Actualizado:", updatedProduct);
+
 
     const existingProduct = document.getElementById(updatedProduct._id);
 
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Escuchar evento de eliminación de producto
   socket.on("Product Deleted", (deletedProduct) => {
-    //console.log("Producto Eliminado:", deletedProduct);
+
 
     const existingProduct = document.getElementById(deletedProduct._id);
     if (existingProduct) {
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         let { payload: productData } = await response.json();
-        console.log(productData);
+
         // Mostrar los datos del producto en el formulario para editar
         titleInput.value = productData.title;
         descriptionInput.value = productData.description;

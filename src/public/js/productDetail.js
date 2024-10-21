@@ -12,7 +12,6 @@ socket.on("disconnect", () => {
 
 // Manejar el evento Product Update para actualizar el stock en la vista de detalles
 socket.on("Product Update", (updatedProduct) => {
-  console.log("Producto Actualizado:", updatedProduct);
 
   // Actualizar el stock en la vista
   const stockElement = document.querySelector(
@@ -78,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const cartId = await getCartId();
   // Escuchar actualizaciones de productos desde el servidor
   socket.on("Cart Update", (updatedCart) => {
-    //console.log("Carrito actualizado:", updatedCart);
     const cartCount = document.getElementById("cartCount");
     if (cartCount) {
       getQT();

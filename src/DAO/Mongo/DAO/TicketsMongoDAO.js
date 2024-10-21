@@ -18,7 +18,6 @@ export default class TicketsMongoDAO {
   };
 
   edit = async (id, status) => {
-    console.log(status);
     return await ticketModel.findOneAndUpdate(
       { _id: id },
       { status },
@@ -55,7 +54,7 @@ export default class TicketsMongoDAO {
         if (typeof populatedTicket.amount === "number") {
           populatedTicket.amount = populatedTicket.amount.toFixed(2);
         }
-        console.log("TICKET MODIFICADO:", populatedTicket.readableDate);
+
         populatedTicket.holi = "holi";
         return populatedTicket;
       })

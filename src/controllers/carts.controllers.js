@@ -103,7 +103,6 @@ export const editProductInCartController = async (req, res, next) => {
       quantity
     );
 
-    console.log(cartUpdated);
     emitProductUpdate(productVirtual);
 
     emitCartUpdate(cartUpdated);

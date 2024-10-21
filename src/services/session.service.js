@@ -89,7 +89,6 @@ export const checkoutService = async (userId) => {
         "El correo electrónico del usuario no está definido."
       );
     }
-    console.log(futureCart);
     const mailOptions = await emailBody(
       user,
       currentPurchase,
@@ -102,7 +101,7 @@ export const checkoutService = async (userId) => {
     await session.commitTransaction();
     session.endSession();
 
-    console.log(ticket.readableDate, "ESTO ENVÍO Y NO RECIBO");
+  
     return ticket;
   } catch (error) {
     await session.abortTransaction();

@@ -208,9 +208,8 @@ img {
 }
 
 .flex6u {
-  flex-basis: 15%;
+  flex-basis: 12%;
 }
-
 
 /* Estilos para contenedores flexibles */
 .flexDiv {
@@ -304,4 +303,25 @@ img {
   font-size: 40px;
   right: 20px;
   top: 20px;
+}
+
+/* Estilo para la tabla ticket */
+.tableticket {
+  border-collapse: collapse;
+  margin: 5px;
+  width: 60%;
+}
+
+/* Estilo de los encabezados de la tabla */
+.tableticket th {
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  padding: 5px;
+}
+
+/* Estilo de las celdas de la tabla */
+.tableticket td {
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+  text-align: left; /* Ajusta a 'left' por defecto */
 }

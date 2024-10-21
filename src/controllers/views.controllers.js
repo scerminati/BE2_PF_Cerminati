@@ -185,7 +185,7 @@ export const viewsProfileController = async (req, res, next) => {
   if (tickets) {
     user.tickets = tickets;
   }
-  console.log(tickets);
+
   res.render("users/profile", { user });
 };
 
@@ -211,13 +211,14 @@ export const viewsTicketController = async (req, res, next) => {
 
   try {
     let ticket = await getTicketService(ticketId);
-    console.log("ticket", ticket.user._id.toString());
-    console.log("user", user._id.toString());
+  
     if (
       ticket.user._id.toString() != user._id.toString() &&
       user.role != "admin"
     ) {
-      return next(new AuthorizationError("No tienes permiso para ingresar"));
+      return next(
+        new AuthorizationError("No tienes permiso para ingresar a este pedido")
+      );
     }
 
     res.render("users/ticket", {

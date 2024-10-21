@@ -12,7 +12,7 @@ socket.on("disconnect", () => {
 
 // Escuchar actualizaciones de productos desde el servidor
 socket.on("Cart Update", (updatedCart) => {
-  //console.log("Carrito actualizado:", updatedCart);
+
   const cartCount = document.getElementById("cartCount");
   if (cartCount) {
     getQT();
@@ -51,7 +51,6 @@ const addToCart = async (productId) => {
 
 // Escuchar el evento Product Update y actualizar la vista
 socket.on("Product Update", (updatedProduct) => {
-  //console.log("Producto Actualizado:", updatedProduct);
 
   const stockElement = document.querySelector(
     `p[data-product-ids="${updatedProduct._id}"]`
@@ -77,7 +76,7 @@ socket.on("Product Update", (updatedProduct) => {
 });
 
 // Añadir eventos a los botones de "Agregar al Carrito"
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async function () {
   welcome && tostada(welcome);
   await updateCartLink();
 

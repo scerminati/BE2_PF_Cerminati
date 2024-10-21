@@ -71,9 +71,9 @@ export const editProductInCartService = async (id, prod, qty) => {
     qty = prodIndex !== -1 ? cart.products[prodIndex].quantity + 1 : 1;
   }
 
-  console.log(product.stock);
+
   if (product.stock < qty) {
-    console.log("entré");
+
     throw new InsufficientStockError("No hay suficiente stock del producto");
   }
 

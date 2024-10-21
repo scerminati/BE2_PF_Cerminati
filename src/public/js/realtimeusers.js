@@ -11,7 +11,7 @@ socket.on("disconnect", () => {
 });
 
 // Esperar a que el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const userList = document.getElementById("listado");
 
   socket.on("User Change", (userinfo) => {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         socket.emit("User Change", newUser);
         tostada("Nuevo rol de Usuario");
       } catch (error) {
-        tostada("Error al cambiar el rol.")
+        tostada("Error al cambiar el rol.");
         console.error("Error al cambiar de rol", error.message);
       }
     }
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         socket.emit("User Change", newUser);
         tostada("Nuevo rol de Administrador");
       } catch (error) {
-        tostada("Error al cambiar el rol.")
+        tostada("Error al cambiar el rol.");
         console.error("Error al cambiar de rol", error.message);
       }
     }
