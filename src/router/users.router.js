@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get("/", isAuthenticated, isAdmin, getAllUsersController);
 
-router.put("/:uid/makeAdmin", isAuthenticated,isAdmin, makeAdminController);
-router.put("/:uid/makeUser", isAuthenticated,isAdmin, makeUserController);
+router.put("/:uid/makeAdmin", isAuthenticated, isAdmin, makeAdminController);
+router.put("/:uid/makeUser", isAuthenticated, isAdmin, makeUserController);
 
 export default router;
