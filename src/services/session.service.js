@@ -98,6 +98,7 @@ export const checkoutService = async (userId) => {
     await session.commitTransaction();
     session.endSession();
 
+    console.log(ticket.readableDate, "ESTO ENVÍO Y NO RECIBO");
     return ticket;
   } catch (error) {
     await session.abortTransaction();

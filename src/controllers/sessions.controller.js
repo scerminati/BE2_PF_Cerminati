@@ -8,7 +8,7 @@ import { checkoutService } from "../services/session.service.js";
 
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
-import { emitUserChange } from "../utils/main/socketUtils.js";
+import { emitTicketChange, emitUserChange } from "../utils/main/socketUtils.js";
 import { BadRequestError, ValidationError } from "../utils/main/errorUtils.js";
 
 export const getLoggedUserController = async (req, res, next) => {
@@ -57,7 +57,9 @@ export const registerUserController = async (req, res, next) => {
       secure: false,
     });
 
-    res.redirect("/login");
+    req.session.welcomeMessage =
+      "¡Hola, " + first_name + "! Gracias por registrarte.";
+    res.redirect("/");
   } catch (error) {
     next(error);
   }
@@ -78,14 +80,15 @@ export const loginUserController = async (req, res, next) => {
       httpOnly: true,
       secure: false,
     });
-
-    return res.redirect("/profile");
+    req.session.welcomeMessage = "¡Hola de nuevo, " + user.first_name + "!";
+    return res.redirect("/");
   } catch (error) {
     next(error);
   }
 };
 
 export const logoutUserController = async (req, res, next) => {
+  req.session.welcomeMessage = "¡Hasta pronto!";
   res.clearCookie("jwt");
   res.redirect("/");
 };
@@ -111,6 +114,8 @@ export const checkoutCartController = async (req, res, next) => {
 
   try {
     let ticket = await checkoutService(idUser);
+
+    emitTicketChange(ticket);
 
     return res
       .status(200)

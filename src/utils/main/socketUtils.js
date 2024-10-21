@@ -17,5 +17,5 @@ export const emitUserChange = async (user) => {
 };
 
 export const emitTicketChange = async (ticket) => {
-  socketServer.emit("Ticket", ticket);
+  socketServer.emit("Ticket Change", ticket);
 };

@@ -87,6 +87,7 @@ export const editProductInCartService = async (id, prod, qty) => {
 
   if (product.stock <= 0) {
     product.status = false;
+    product.stock = 0;
   }
 
   let cartEdited = await cartService.editCart(id, cart.products);

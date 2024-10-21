@@ -7,7 +7,7 @@
   <br />
   <div id="listProd"><h2>Listado de Usuarios</h2>
     <div class="listado"><div id="listado">
-        {{#each users}}
+        {{#each usersMod}}
           <div id="{{this._id}}" class="productoBox">
             <p class="flex1u">Email: {{this.email}}</p>
             <p class="flex2u">
@@ -24,7 +24,9 @@
             </p>
             <p class="flex3u">Rol: {{this.role}}</p>
 
-            {{#if (eq this.role "admin")}}
+            {{#if (eq this.role "logged")}}
+              <button class="invisible"></button>
+            {{else if (eq this.role "admin")}}
               <button
                 type="button"
                 class="btn-user flex4u"
@@ -37,7 +39,6 @@
                 data-user-id="{{this._id}}"
               >Hacer Admin</button>
             {{/if}}
-
           </div>
         {{/each}}
       </div></div></div>

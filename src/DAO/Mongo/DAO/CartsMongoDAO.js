@@ -24,7 +24,6 @@ export default class CartsMongoDAO {
   };
 
   populate = async (cartpopulate) => {
-    try {
       const cartsArray = Array.isArray(cartpopulate)
         ? cartpopulate
         : [cartpopulate];
@@ -48,9 +47,7 @@ export default class CartsMongoDAO {
       );
 
       return populatedCarts.length === 1 ? populatedCarts[0] : populatedCarts;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+
+    
   };
 }

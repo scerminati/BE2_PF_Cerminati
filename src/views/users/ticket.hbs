@@ -1,0 +1,23 @@
+<div id="{{ticket._id}}" class="productoBox">
+  <p class="flex2u">
+    Código:
+    {{ticket.code}}
+  </p>
+  <p class="flex5u">Usuario: {{this.user.email}}</p>
+  <p class="flex3u">
+    Total: ${{this.amount}}
+  </p>
+  <p class="flex2u">
+    Fecha de Pedido:
+    {{this.readableDate}}
+  </p>
+
+  <p class="flex3u">Estado: {{this.status}}</p>
+
+  <button
+    type="button"
+    class="btn-user flex6u"
+    data-user-id="{{this._id}}"
+  >Administrar Pedido</button>
+
+</div>

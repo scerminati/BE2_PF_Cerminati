@@ -2,9 +2,9 @@ import {
   getAllTicketsService,
   getTicketFromUserService,
   getTicketService,
+  updateTicketService,
 } from "../services/tickets.services.js";
-
-
+import { emitTicketChange } from "../utils/main/socketUtils.js";
 
 export const getAllTicketsController = async (req, res, next) => {
   let limit = parseInt(req.query.limit);
@@ -16,7 +16,7 @@ export const getAllTicketsController = async (req, res, next) => {
         tickets < limit
           ? `Mostrando los primeros ${limit} ickets`
           : "Mostrando todos los tickets",
-      payload: users,
+      payload: tickets,
     });
   } catch (error) {
     next(error);
@@ -56,6 +56,33 @@ export const getTicketsFromUserController = async (req, res, next) => {
   }
 };
 
-export const createTicketController = async (req, res, next) => {};
+export const editTicketController = async (req, res, next) => {
+  const idTicket = req.params.tid;
+  if (!idTicket || idTicket.length !== 24) {
+    return next(new ValidationError("ID de pedido inválido."));
+  }
 
-export const editTicketController = async (req, res, next) => {};
+  const allowedStatuses = [
+    "pending",
+    "processing",
+    "delayed",
+    "delivered",
+    "cancelled",
+  ];
+  const { status } = req.body;
+  if (!allowedStatuses.includes(status)) {
+    return next(new ValidationError("Estado de pedido inválido."));
+  }
+
+  try {
+    const updatedTicket = await updateTicketService(idTicket, status);
+
+    emitTicketChange(updatedTicket);
+    return res.status(200).json({
+      msg: `El estado del ticket ${idTicket} ha sido actualizado a ${status}`,
+      payload: updatedTicket,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

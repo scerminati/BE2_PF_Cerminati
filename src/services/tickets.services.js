@@ -20,7 +20,8 @@ export const getAllTicketsService = async (limit) => {
   if (!isNaN(limit) && limit > 0) {
     tickets = tickets.slice(0, limit);
   }
-  return tickets;
+  console.log("ok");
+  return await populateTicketService(tickets);
 };
 
 export const getTicketService = async (id) => {
@@ -28,7 +29,7 @@ export const getTicketService = async (id) => {
   if (!ticket) {
     throw new NotFoundError(`No se encuentra el ticket con el id ${id}`);
   }
-  return ticket;
+  return await populateTicketService(ticket);
 };
 
 export const getTicketFromUserService = async (id) => {
@@ -37,15 +38,13 @@ export const getTicketFromUserService = async (id) => {
   let tickets = await ticketService.getTicketsFromUser(id);
 
   if (!tickets || tickets.length === 0) {
-    throw new NotFoundError(
-      `No se encontraron tickets para el usuario con id ${id}`
-    );
+    console.log(`No se encontraron tickets para el usuario con id ${id}`);
+    return null;
   }
-  return tickets;
+  return await populateTicketService(tickets);
 };
 
 export const createTicketService = async (idUser, prods, amount) => {
-
   let ticket = {
     code: await generateUniqueTicketCode(),
     purchase_datetime: new Date(),
@@ -60,8 +59,16 @@ export const createTicketService = async (idUser, prods, amount) => {
   if (!savedTicket) {
     throw new InternalServerError("Error al generar ticket");
   }
+  return await populateTicketService(savedTicket);
+};
 
-  return savedTicket;
+export const updateTicketService = async (id, status) => {
+  let ticket = await ticketService.editTicket(id, status);
+  if (!ticket) {
+    throw new InternalServerError(`No se pudo editar el pedido con id ${id}.`);
+  }
+
+  return await populateTicketService(ticket);
 };
 
 const generateTicketCode = () => {
@@ -91,4 +98,14 @@ const generateUniqueTicketCode = async () => {
   } while (existingTicket);
 
   return code;
+};
+
+const populateTicketService = async (cart) => {
+  let ticketsPopulate = await ticketService.populateTicket(cart);
+
+  if (!ticketsPopulate) {
+    throw new InternalServerError("Error al popular el carrito");
+  }
+
+  return ticketsPopulate;
 };

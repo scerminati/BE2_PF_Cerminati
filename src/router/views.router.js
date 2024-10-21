@@ -10,6 +10,7 @@ import {
   viewsLoginController,
   viewsRegisterController,
   viewsProfileController,
+  viewsTicketController,
 } from "../controllers/views.controllers.js";
 
 import {
@@ -27,9 +28,11 @@ router.get("/products/:pid", navigate, viewsProductController);
 
 router.get("/carts/:cid", isAuthenticated, isUserCart, viewsCartController);
 
+router.get("/tickets/:tid", isAuthenticated, viewsTicketController);
+
 router.get("/realtimeproducts", isAuthenticated, isAdmin, viewsRTPController);
 router.get("/realtimeusers", isAuthenticated, isAdmin, viewsRTUController);
-router.get("/realtimeticket", isAuthenticated, isAdmin, viewsRTTController);
+router.get("/realtimetickets", isAuthenticated, isAdmin, viewsRTTController);
 
 router.get("/login", isNotAuthenticated, viewsLoginController);
 router.get("/register", isNotAuthenticated, viewsRegisterController);

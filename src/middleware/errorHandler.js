@@ -8,7 +8,10 @@ export const errorHandler = (err, req, res, next) => {
     ", message:",
     err.message
   );
-  if (req.originalUrl.startsWith("/api")) {
+
+  const session = req.originalUrl.startsWith("/api/sessions");
+  const api = req.originalUrl.startsWith("/api");
+  if (!session && api) {
     // Respuesta para solicitudes API en formato JSON
     res.status(statusCode).json({
       code: statusCode,

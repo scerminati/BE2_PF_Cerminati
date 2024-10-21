@@ -3,6 +3,6 @@ export const helpers = {
   add: (a, b) => a + b,
   sub: (a, b) => {
     const result = a - b;
-    return result < 0 ? 0 : result; 
+    return result < 0 ? 0 : result;
   },
 };

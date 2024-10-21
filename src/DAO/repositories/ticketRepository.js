@@ -23,8 +23,8 @@ export default class TicketsRepository {
     return await this.dao.edit(id, status);
   }
 
-  async populateTicket(id) {
-    return await this.dao.populate(id);
+  async populateTicket(tickets) {
+    return await this.dao.populate(tickets);
   }
 
   async getTicketByCode(code) {

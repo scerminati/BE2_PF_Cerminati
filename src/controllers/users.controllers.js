@@ -3,6 +3,7 @@ import {
   makeAdminService,
   makeUserService,
 } from "../services/users.services.js";
+import { BadRequestError } from "../utils/main/errorUtils.js";
 
 import { emitUserChange } from "../utils/main/socketUtils.js";
 
@@ -49,6 +50,13 @@ export const makeUserController = async (req, res, next) => {
   if (!idUser || idUser.length !== 24) {
     return next(new ValidationError("ID usuario inválido."));
   }
+  const idCurrent = req.user._id;
+  if (idCurrent.toString() === idUser) {
+    return next(
+      new BadRequestError("Actualmente loggeado como Administrador.")
+    );
+  }
+
   try {
     const newUser = await makeUserService(idUser);
 

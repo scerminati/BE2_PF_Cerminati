@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               });
 
               if (!response.ok) {
-                tostada("Error en la respuesta del servidor.")
+                tostada("Error en la respuesta del servidor.");
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
@@ -77,16 +77,14 @@ document.addEventListener("DOMContentLoaded", async function () {
               );
 
               if (!response.ok) {
-                tostada("Error en la respuesta del servidor.")
+                tostada("Error en la respuesta del servidor.");
                 throw new Error("Error al procesar la compra");
               }
 
               let { msg: data } = await response.json();
               tostada(data);
 
-              setTimeout(() => {
-                carritoVacio();
-              }, 1000);
+              carritoVacio();
 
               setTimeout(() => {
                 window.location.href = "/";
@@ -178,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
-                  tostada("Error en la respuesta del servidor.")
+                  tostada("Error en la respuesta del servidor.");
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
@@ -208,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
-                  tostada("Error en la respuesta del servidor.")
+                  tostada("Error en la respuesta del servidor.");
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
@@ -228,7 +226,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           carritoVacio();
         }
       } else {
-        tostada("Error al obtener el carrito.")
+        tostada("Error al obtener el carrito.");
         console.error("Error al obtener el carrito:", response.statusText);
       }
     } catch (error) {

@@ -8,10 +8,18 @@ import {
   getProductService,
   paginateProductsService,
 } from "../services/products.services.js";
+import {
+  getAllTicketsService,
+  getTicketFromUserService,
+  getTicketService,
+} from "../services/tickets.services.js";
 
 import { getAllUsersService } from "../services/users.services.js";
 
-import { ValidationError } from "../utils/main/errorUtils.js";
+import {
+  AuthorizationError,
+  ValidationError,
+} from "../utils/main/errorUtils.js";
 
 export const viewsPaginateController = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -67,6 +75,11 @@ export const viewsPaginateController = async (req, res, next) => {
 
     if (prodStock) {
       result.docs = prodStock;
+    }
+
+    if (req.session && req.session.welcomeMessage) {
+      result.welcomeMessage = req.session.welcomeMessage;
+      req.session.welcomeMessage = null;
     }
 
     return res.render("index", result);
@@ -128,17 +141,36 @@ export const viewsRTPController = async (req, res, next) => {
 };
 
 export const viewsRTUController = async (req, res, next) => {
+  const idUser = req.user._id;
   try {
     const users = await getAllUsersService();
+
+    const usersMod = users.map((user) => {
+      if (user._id.toString() === idUser.toString()) {
+        return { ...user, role: "logged" };
+      }
+      return user;
+    });
+
     res.render("admin/realtimeusers", {
-      users,
+      usersMod,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const viewsRTTController = async (req, res, next) => {};
+export const viewsRTTController = async (req, res, next) => {
+  try {
+    const tickets = await getAllTicketsService();
+
+    res.render("admin/realtimetickets", {
+      tickets,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const viewsLoginController = async (req, res, next) => {
   res.render("users/login");
@@ -147,7 +179,14 @@ export const viewsRegisterController = async (req, res, next) => {
   res.render("users/register");
 };
 export const viewsProfileController = async (req, res, next) => {
-  res.render("users/profile", { user: req.user });
+  let idUser = req.user._id;
+  let user = req.user;
+  let tickets = await getTicketFromUserService(idUser);
+  if (tickets) {
+    user.tickets = tickets;
+  }
+  console.log(tickets);
+  res.render("users/profile", { user });
 };
 
 async function getSessionStock(req, prod) {
@@ -162,3 +201,29 @@ async function getSessionStock(req, prod) {
 
   return await getVirtualStockService(cartId, prod);
 }
+
+export const viewsTicketController = async (req, res, next) => {
+  const user = req.user;
+  const ticketId = req.params.tid;
+  if (!ticketId || ticketId.length !== 24) {
+    return next(new ValidationError("ID de carrito inválido."));
+  }
+
+  try {
+    let ticket = await getTicketService(ticketId);
+    console.log("ticket", ticket.user._id.toString());
+    console.log("user", user._id.toString());
+    if (
+      ticket.user._id.toString() != user._id.toString() &&
+      user.role != "admin"
+    ) {
+      return next(new AuthorizationError("No tienes permiso para ingresar"));
+    }
+
+    res.render("users/ticket", {
+      ticket,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

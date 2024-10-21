@@ -17,9 +17,9 @@ const productSchema = new mongoose.Schema({
 const ticketSchema = new mongoose.Schema({
   code: { type: Number, required: true, unique: true },
   purchase_datetime: { type: Number, required: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   products: [productSchema],
-  amount: { type: String, required: true },
+  amount: { type: Number, required: true },
   status: { type: String, default: "pending" },
 });
 

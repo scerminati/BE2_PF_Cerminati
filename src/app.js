@@ -27,6 +27,7 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 import { sendEmail } from "./config/mail.config.js";
+import { NotFoundError } from "./utils/main/errorUtils.js";
 
 dotenv.config();
 
@@ -40,6 +41,11 @@ configureRoutes();
 
 //Estáticos
 app.use(express.static(path.join(__dirname, "../../public")));
+
+app.use((req, res, next) => {
+  const error = new NotFoundError("Ruta no válida.");
+  next(error);
+});
 
 //Manejo de errores
 app.use(errorHandler);
