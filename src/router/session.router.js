@@ -5,27 +5,22 @@ import {
   registerUserController,
   loginUserController,
   logoutUserController,
-  checkoutCartController,
   cartLinkUpdateController,
 } from "../controllers/sessions.controller.js";
 
 import {
   isAuthenticated,
   isNotAuthenticated,
-  isUserCart,
   navigate,
 } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/register", isNotAuthenticated, registerUserController);
 router.get("/current", isAuthenticated, getLoggedUserController);
+router.get("/cartLink", navigate, cartLinkUpdateController);
 
+router.post("/register", isNotAuthenticated, registerUserController);
 router.post("/login", isNotAuthenticated, loginUserController);
 router.post("/logout", isAuthenticated, logoutUserController);
-
-router.post("/:cid/checkout", isAuthenticated, checkoutCartController);
-
-router.get("/cartLink", navigate, cartLinkUpdateController);
 
 export default router;

@@ -4,7 +4,7 @@ import {
   registerUserService,
   cartLinkUpdateService,
 } from "../services/users.services.js";
-import { checkoutService } from "../services/session.service.js";
+import { checkoutService } from "../services/checkout.service.js";
 
 import { generateToken } from "../utils/session/webTokenUtil.js";
 
@@ -116,7 +116,7 @@ export const checkoutCartController = async (req, res, next) => {
     let ticket = await checkoutService(idUser);
 
     emitTicketChange(ticket);
- 
+
     return res
       .status(200)
       .send({ msg: "Compra realizada exitosamente", payload: ticket.message });

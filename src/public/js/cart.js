@@ -66,13 +66,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             tostada("Procesando compra...");
 
             try {
-              const response = await fetch(
-                `../api/sessions/${cartId}/checkout`,
-                {
-                  method: "POST",
-                  credentials: "include",
-                }
-              );
+              const response = await fetch(`../api/carts/${cartId}/checkout`, {
+                method: "POST",
+                credentials: "include",
+              });
 
               if (!response.ok) {
                 throw new Error(`Error al procesar la compra.`);

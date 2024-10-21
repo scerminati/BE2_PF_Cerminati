@@ -8,13 +8,14 @@ Este proyecto es la programación del Backend del E-Commerce So-Games, para jueg
 2. [Servidor](#servidor)
 3. [Routers](#routers)
 4. [Endpoints](#endpoints)
-5. [Mongoose y Modelos](#mongoose-y-modelos)
-6. [Multer y subida de archivos](#multer-y-subida-de-archivos)
-7. [Utils](#utils)
-8. [Sesión, Autenticación y Autorización](#sesión-autenticación-y-autorización)
-9. [Visualización y Gestión de E-Commerce en FrontEnd](#visualización-y-gestión-de-e-commerce-en-frontend)
-10. [Estructura del Proyecto](#estructura-del-proyecto)
-11. [Recursos Utilizados](#recursos-utilizados)
+5. [Arquitectura por Capas](#arquitectura-por-capas)
+6. [Mongoose y Modelos](#mongoose-y-modelos)
+7. [Multer y subida de archivos](#multer-y-subida-de-archivos)
+8. [Utils](#utils)
+9. [Sesión, Autenticación y Autorización](#sesión-autenticación-y-autorización)
+10. [Visualización y Gestión de E-Commerce en FrontEnd](#visualización-y-gestión-de-e-commerce-en-frontend)
+11. [Estructura del Proyecto](#estructura-del-proyecto)
+12. [Recursos Utilizados](#recursos-utilizados)
 
 ## Instalación
 
@@ -42,107 +43,191 @@ npm install
 npm start
 ```
 
+5. Configurar las variables de entorno. Se puede verificar lo necesario en el archivo `.env.example` y copiar el mismo en la raiz del proyecto como `src/.env`.
+
 ## Servidor
 
-El servidor está configurado para ejecutarse en _localhost_ en el puerto _8080_. Una vez que la aplicación esté inicializada con el comando `npm start`, se puede visualizar el proyecto en un navegador con el siguiente link:
+El servidor está configurado para ejecutarse en _localhost_ en el puerto configurado en la variable de entonrno `PORT`. Una vez que la aplicación esté inicializada con el comando `npm start`, se puede visualizar el proyecto en un navegador con el siguiente link:
 
-- **http://localhost:8080/**
+- **http://localhost:`PORT`/**
 
 ## Routers
 
-La aplicación cuenta con cuatro routers: _products_, _carts_, _sessions_ y _views_.
+La aplicación cuenta con seis routers:
 
 - **Products**: Contiene los métodos **GET**, **POST**, **PUT** y **DELETE** para la gestión de productos.
 - **Carts**: Incluye los métodos **GET**, **POST**, **PUT** y **DELETE** para la gestión de carritos.
+- **Users**: Permite la gestión de usuarios, utilizando los métodos **GET** y **PUT**.
+- **Tickets**: Permite la gestión de pedidos, utilizando los métodos **GET** y **PUT**.
 - **Sessions**: Permite el registro, inicio de sesión y autentificación del usuario dentro del sitio. Incluye los métodos **GET** y **POST**.
 - **Views**: Permite renderizar la información en pantalla usando Handlebars mediante el método **GET**.
 
 ## Endpoints
 
-### Products
+A continuación se describen todos los endpoints disponibles en el backend, con las respuestas correspondientes
 
-- **GET**: El endpoint permite obtener el listado completo de los productos con todo su detalle. Si se especifica un id, **/api/products/_id_**, el método mostrará el producto con dicho id si existe tal. Asimismo, al especificar un límite como pedido con **/api/products/?limit=_X_**, se devuelve el listado de productos limitados en cantidad _X_.
+### Carts `/api/carts/`
 
-- **POST**: El endpoint permite agregar un nuevo producto. El id del nuevo producto se define solo, de manera que no se repita con ninguno de los anteriores. El método también toma como obligatorios los campos de título, código, descripción, stock y categoría, así como también el tipo de dato que se ingresa. Si stock pasa a tener un valor de 0, el status se añadirá al producto como _false_, de lo contrario, siempre será _true_. En cuanto a thumbnail, espera recibir un string, pero el ingreso de dicho dato no es necesario. En caso de no recibirlo o recibir otro tipo de dato (como numérico), se completará como un string vacío. Una vez realizado el método, se actualiza el archivo en la carpeta json. El método debe ejecutarse en la raíz de la api, **/api/products/**.
+- **GET**: Este endpoint permite recuperar información sobre los carritos. La ruta **/api/carts/** está disponible únicamente para usuarios autenticados con privilegios de administrador y se utiliza para obtener una lista completa de todos los carritos a través del controlador `getAllCartsController`.
 
-- **PUT**: Este endpoint permite modificar cualquiera de los productos que se encuentran en la base de datos especificando el id del mismo mediante **/api/products/_id_**. El método buscará los datos a cambiar y solo cambiará los mismos, sin necesidad de volver a escribir todo el producto, o lo que se desea dejar igual. En caso de que el producto no exista, devolverá un error _404_.
+  - **/api/carts/:cid**: Permite obtener los detalles de un carrito específico utilizando su identificador único **cid**. Este endpoint está restringido a usuarios autenticados que son propietarios del carrito, gestionando la solicitud a través del controlador `getCartController`.
 
-- **DELETE**: El endpoint busca el producto mediante la especificación del id **/api/products/_id_**, y elimina el producto del array, actualizando el archivo al hacerlo.
+  - **/api/carts/:cid/QT**: Este endpoint permite obtener la cantidad total de productos en un carrito específico. La ruta está habilitada para la navegación y se maneja a través del controlador `getCartQTController`.
 
-### Carts
+- **POST**: Este endpoint permite crear un nuevo carrito en la ruta **/api/carts/**. Solo está disponible para usuarios autenticados con privilegios de administrador, y se invoca el controlador `createCartController` para generar un nuevo carrito con un identificador asignado automáticamente y un array de productos vacío.
 
-- **GET**: El endpoint permite obtener el listado completo de los carritos con el detalle de id y los productos dentro de ellos, especificando id y cantidad. Si se especifica un id, **/api/carts/_id_**, el método mostrará el carrito con dicho id si existe. Asimismo, al especificar un límite como pedido con **/api/carts/?limit=_X_**, se devuelve el listado de carritos limitados en cantidad _X_. Adicionalmente se añade **/api/carts/_id_/QT** para poder manejar los cambios en el carrito y obtener la cantidad de productos totales en él, para visualizarlo en los handlebars.
+- **POST**: **/api/carts/:cid/checkout**: Este endpoint permite procesar la compra del carrito especificado. Requiere autenticación y ejecuta el controlador `checkoutCartController`.
 
-- **POST**: El endpoint debe ejecutarse en la raíz **/api/carts**, y generará un nuevo carrito con un id asignado automáticamente. El mismo se guardará en el archivo .json y generará el array de productos vacíos para luego ser añadidos.
+- **PUT**: Este endpoint permite editar el contenido de un carrito existente. La ruta **/api/carts/:cid/product/:pid** requiere que el usuario esté autenticado y que tenga acceso al carrito, invocando el controlador `editProductInCartController` para agregar un producto específico **pid** al carrito **cid**.
 
-- **PUT**: El endpoint necesita dos parámetros: el id del carrito y el id del producto a agregar. Se debe ejecutar en la ruta **/api/carts/_idCarrito_/product/_idProducto_**. Ambos ids deben ser válidos y existir en los arrays correspondientes. Si tanto el id como el producto existen, se verifica primero que el status del producto sea **_true_**, lo cual implica que hay stock disponible. En caso de que sea falso, se arroja un error _404_. Si hay stock, se agrega a cantidades del producto de a 1, generando un nuevo objeto de producto con el id del producto en caso de que no exista, y sumando una cantidad de 1 si ya existe. A medida que se agregan productos, se van descontando del array de productos la misma cantidad en stock. En caso de que el stock llegue a 0, el método arroja un error _404_ avisando que no hay más stock para agregar.
+- **DELETE**: Este endpoint permite eliminar productos de un carrito o vaciar el carrito completo.
 
-- **DELETE**: El endpoint permite el distintas combinaciones de parámetros para resolver la consulta. Si se pasa **/api/carts/_idCarrito_/product/_idProducto_**, se elimina dicho producto del carrito, devolviendo así el stock original a la base de datos de producto. Por otro lado, si se pasa **/api/carts/_idCarrito_**, se eliminarán todos los productos dentro del carrito seleccionado, no así el carrito, permitiendo la persistencia y continuar con la compra si así se desea.
+  - **/api/carts/:cid**: Elimina todos los productos del carrito especificado, manteniendo el carrito vacío para futuras compras. Este endpoint requiere autenticación y verifica que el usuario sea propietario del carrito a través del controlador `emptyCartController`.
 
-### Sessions
+  - **/api/carts/:cid/product/:pid**: Elimina un producto específico del carrito. Requiere autenticación y acceso al carrito, gestionando la solicitud con el controlador `deleteProductInCartController`.
 
-- **GET**: El endpoint de `GET` de Sessions permite obtener los datos del usuario autenticado.
+### Products `/api/products/`
 
-  - **/current**: Envía los datos del usuario logeado una vez que se autentica la sesión del mismo al frontend.
+- **GET**: Este endpoint permite recuperar información sobre los productos.
 
-- **POST**: Los siguientes endpoints habilitan el registro, logueo y autentificación del usuario a través de inserciones en la base de datos y verificaciones en la misma.
+  - **/api/products/**: Devuelve una lista completa de todos los productos disponibles. Este endpoint utiliza el controlador `getAllProductsController` y requiere que el usuario esté autenticado para navegar por la lista.
 
-  - **/register**: Permite el registro del usuario verificando que el correo electrónico no se encuentre ya en la base de datos. Una vez que se crea el registro, el usuario tendrá un rol de `user` y un carrito se generará con id único.
+  - **/api/products/:pid**: Permite obtener los detalles de un producto específico utilizando su identificador único **pid**. Esta ruta también está disponible para la navegación y es gestionada por el controlador `getProductController`.
 
-  - **/login**: Permite el inicio de sesión siempre que se haya registrado el usuario previamente, si el inicio de sesión es exitoso, se genera un token que se almacena en las cookies.
+- **POST**: Este endpoint permite crear un nuevo producto en la ruta **/api/products/**. Solo está disponible para usuarios autenticados con privilegios de administrador. Utiliza el controlador `createProductController` y requiere la carga de una imagen a través del middleware `uploader`, que maneja la subida de archivos utilizando `multer`. Si se produce un error durante la carga, se invoca el manejador de errores `multerErrorHandler`.
 
-  - **/logout**: Permite la finalización de la sesión, eliminando la cookie del navegador.
+- **PUT**: Este endpoint permite editar un producto existente. La ruta **/api/products/:pid** está restringida a usuarios autenticados con privilegios de administrador. Utiliza el controlador `editProductController` y también requiere la carga de una imagen. El proceso de subida y manejo de errores es el mismo que en el método POST.
 
-  - **/checkout**: Actualiza el estado del usuario, creando un nuevo carrito en su usuario y guardando el anterior.
+- **DELETE**: Este endpoint permite eliminar un producto específico utilizando su identificador único **pid**. La ruta **/api/products/:pid** requiere autenticación y privilegios de administrador. La eliminación del producto se maneja a través del controlador `deleteProductController`.
 
-### Views
+### Users `/api/users`
 
-- **GET**: Los endpoints de `GET` permiten la visualización y renderización de las vistas utilizando Handlebars. A continuación se describen las vistas principales:
+- **GET**: Este endpoint permite obtener la lista completa de usuarios. La ruta **/api/users** solo está disponible para usuarios autenticados y con privilegios de administrador. Al acceder a esta ruta, se invoca el controlador `getAllUsersController`, que devuelve todos los usuarios registrados en el sistema.
 
-  - **/**: Renderiza la vista principal (_index.handlebars_) con la lista de productos. Implementa paginación, filtrado por categoría, y ordenación por precio. Se pueden pasar los siguientes parámetros de consulta:
+- **PUT**: Este endpoint ofrece dos opciones para gestionar los roles de los usuarios:
+  - **/api/users/:uid/makeAdmin**: Al invocar esta ruta, un administrador puede promover a un usuario (especificado por su **uid**) a administrador. Este cambio es gestionado por el controlador `makeAdminController`.
+  - **/api/users/:uid/makeUser**: Similarmente, esta ruta permite a un administrador revertir el rol de un usuario (especificado por su **uid**) a usuario normal. Esta acción es manejada por el controlador `makeUserController`.
 
-    - `page`: Número de la página a visualizar. Por defecto es `1`.
-    - `limit`: Límite de productos a mostrar por página. El valor máximo permitido es `10`.
-    - `sort`: Ordenar los productos por precio. Valores posibles: `asc` (ascendente) o `desc` (descendente).
-    - `category`: Filtrar los productos por una categoría específica.
+### Tickets `/api/tickets`
 
-  - **/products/:pid**: Muestra los detalles de un producto específico. Renderiza la vista _productDetail.handlebars_. El parámetro `:pid` corresponde al ID del producto.
+- **GET**: Este endpoint permite acceder a la información de los tickets. La ruta **/api/tickets** está disponible solo para usuarios autenticados con privilegios de administrador, invocando el controlador `getAllTicketsController` para obtener la lista completa de tickets registrados.
 
-  - **/realtimeproducts**: Renderiza la vista _realtimeproducts.handlebars_ que muestra todos los productos en tiempo real. La redirección debe estar autorizada, es decir, se verifica que el usuario logueado sea efectivamente un administrador.
+  - **/api/tickets/:tid**: Permite obtener un ticket específico utilizando su identificador único **tid**. Este endpoint está disponible para usuarios autenticados, gestionando la solicitud a través del controlador `getTicketController`.
 
-  - **/carts/:cid**: Muestra el contenido de un carrito específico. Renderiza la vista _cart.handlebars_ con el detalle de los productos en el carrito, la cantidad de cada uno y el precio total del carrito. El parámetro `:cid` corresponde al ID del carrito. Autentica al usuario logeado antes de poder acceder a esta ruta.
+  - **/api/tickets/:tid/user/:uid**: Este endpoint permite obtener todos los tickets asociados a un usuario específico, indicado por su **uid**, a partir de un ticket particular **tid**. Esta función también está disponible para usuarios autenticados y es manejada por el controlador `getTicketsFromUserController`.
 
-  - **/login**: Redirecciona al usuario a la página de login, siempre y cuando este no esté logueado.
+- **PUT**: Este endpoint permite editar un ticket existente. La ruta **/api/tickets/:tid** requiere que el usuario esté autenticado y tenga privilegios de administrador, invocando el controlador `editTicketController` para realizar las modificaciones necesarias en el ticket especificado.
 
-  - **/register**: Redirecciona al usuario a la página de registro, siempre y cuando no esté loguado.
+### Sessions `/api/sessions/`
 
-  - **/profile**: Redirecciona al usuario a su perfil, si está logueado y autenticado mediante passport.
+- **GET**: Este endpoint permite obtener información sobre el usuario que ha iniciado sesión.
 
-  - **/failedregister** y **/faillogin**: Redirecciona al usuario a una página de error, donde se espefica el mismo.
+  - **/api/sessions/current**: Devuelve los detalles del usuario actualmente autenticado. Este endpoint requiere que el usuario esté autenticado y es manejado por el controlador `getLoggedUserController`.
+
+- **GET**: Este endpoint se utiliza para actualizar el enlace del carrito del usuario.
+
+  - **/api/sessions/cartLink**: Permite al usuario obtener y actualizar el enlace de su carrito. Este endpoint utiliza el middleware `navigate` y es gestionado por el controlador `cartLinkUpdateController`.
+
+- **POST**: Este endpoint permite registrar un nuevo usuario.
+
+  - **/api/sessions/register**: Permite a los usuarios crear una nueva cuenta. Este endpoint requiere que el usuario no esté autenticado y es gestionado por el controlador `registerUserController`.
+
+- **POST**: Este endpoint permite a los usuarios iniciar sesión en su cuenta.
+
+  - **/api/sessions/login**: Permite a los usuarios autenticarse. Este endpoint también requiere que el usuario no esté autenticado y es gestionado por el controlador `loginUserController`.
+
+- **POST**: Este endpoint permite a los usuarios cerrar sesión.
+
+  - **/api/sessions/logout**: Permite a los usuarios cerrar sesión de su cuenta. Este endpoint requiere que el usuario esté autenticado y es gestionado por el controlador `logoutUserController`.
+
+### Views `/`
+
+- **GET**: Este endpoint carga la vista principal del sitio.
+
+  - **/**: Proporciona la vista paginada de los productos y se gestiona mediante el controlador `viewsPaginateController`. Este endpoint utiliza el middleware `navigate`.
+
+- **GET**: Este endpoint muestra los detalles de un producto específico.
+
+  - **/products/:pid**: Muestra la información de un producto en particular, utilizando el controlador `viewsProductController`. También utiliza el middleware `navigate`.
+
+- **GET**: Este endpoint carga la vista del carrito de un usuario.
+
+  - **/carts/:cid**: Permite a los usuarios autenticados ver su carrito específico. Este endpoint es gestionado por el controlador `viewsCartController` y requiere que el usuario esté autenticado y que el carrito pertenezca a ese usuario.
+
+- **GET**: Este endpoint muestra los detalles de un ticket.
+
+  - **/tickets/:tid**: Proporciona información sobre un ticket específico. Este endpoint es gestionado por el controlador `viewsTicketController` y requiere que el usuario esté autenticado.
+
+- **GET**: Este endpoint muestra la vista de productos en tiempo real.
+
+  - **/realtimeproducts**: Permite a los administradores autenticados ver los productos en tiempo real, utilizando el controlador `viewsRTPController`.
+
+- **GET**: Este endpoint muestra la vista de usuarios en tiempo real.
+
+  - **/realtimeusers**: Permite a los administradores autenticados ver la lista de usuarios en tiempo real, gestionado por el controlador `viewsRTUController`.
+
+- **GET**: Este endpoint muestra la vista de tickets en tiempo real.
+
+  - **/realtimetickets**: Permite a los administradores autenticados ver los tickets en tiempo real, utilizando el controlador `viewsRTTController`.
+
+- **GET**: Este endpoint carga la vista de inicio de sesión.
+
+  - **/login**: Proporciona la vista de inicio de sesión para usuarios no autenticados, gestionado por el controlador `viewsLoginController`.
+
+- **GET**: Este endpoint carga la vista de registro.
+
+  - **/register**: Proporciona la vista de registro para usuarios no autenticados, gestionado por el controlador `viewsRegisterController`.
+
+- **GET**: Este endpoint carga la vista del perfil del usuario.
+
+  - **/profile**: Permite a los usuarios autenticados ver su perfil, utilizando el controlador `viewsProfileController`.
+
+## Arquitectura por Capas
+
+La arquitectura por capas en este proyecto está diseñada para promover una separación clara de responsabilidades, facilitando el mantenimiento y la escalabilidad de la aplicación. Se estructura en varias capas, cada una con un propósito específico:
+
+1. **Controladores**: Los controladores son responsables de manejar las solicitudes HTTP entrantes y definir la lógica de respuesta. Cada controlador está asociado a un modelo específico y utiliza los servicios para realizar operaciones relacionadas con ese modelo. Por ejemplo, los controladores de `Product`, `Cart`, `Ticket`, y `User` manejan las operaciones de creación, actualización, eliminación y obtención de datos, delegando la lógica de negocio a los servicios correspondientes.
+
+2. **Servicios**: La capa de servicios actúa como intermediaria entre los controladores y los repositorios. Los servicios contienen la lógica de negocio y se encargan de la manipulación de los datos. Utilizan el patrón Factory para crear instancias de los modelos necesarios y llaman a los repositorios para realizar operaciones CRUD en la base de datos. Esta capa permite que la lógica de negocio esté desacoplada de la lógica de presentación, lo que facilita las pruebas y el mantenimiento. Adicionalmente utilizan DTO para filtar la información que se devuelve al controlador.
+
+3. **Repositorios**: La capa de repositorios se encarga de interactuar directamente con la base de datos. Cada repositorio define métodos específicos para las operaciones de acceso a datos, como encontrar, guardar, actualizar y eliminar registros. Utilizando Mongoose, los repositorios abstraen los detalles de la implementación de la base de datos, proporcionando una interfaz clara y coherente para los servicios.
+
+4. **Factory**: El patrón Factory se utiliza para la creación de instancias de los modelos dentro de los servicios. Este enfoque permite gestionar la complejidad y promueve la reutilización de código, asegurando que las instancias de los modelos se creen de manera consistente y controlada.
+
+Esta arquitectura por capas no solo mejora la organización del código, sino que también facilita la implementación de pruebas unitarias y de integración. Al mantener una separación de preocupaciones, se logra un desarrollo más limpio y modular, permitiendo realizar cambios en una capa sin afectar a las demás.
 
 ## Mongoose y Modelos
 
+El DAO para las operaciones de Mongoose se define por separado para cada uno de los modelos, de manera que las distintas operaciones estén organizadas y sean fáciles de gestionar. Además, se estandarizan los nombres de las operaciones para facilitar los llamados desde el repositorio.
+
 ### Modelos de Datos
 
-- **Product**: Define la estructura de los productos con los campos de título, código, descripción, stock, categoría y thumbnail.
-- **Cart**: Define la estructura de los carritos, que incluye el array de productos y su cantidad. El array de productos, a su vez, es poblada por el modelo de _products_.
-- **User**: Define la estructura de los usuarios para el registro de los mismos, asignando como rol por defecto de `user` y asignando un carrito.
+- **Product**: Define la estructura de los productos, que incluye campos como título, código, descripción, stock, categoría y thumbnail.
+- **Cart**: Define la estructura de los carritos de compra, que incluye un array de productos y su cantidad. Este array de productos se pobla a partir del modelo de _products_.
+- **Ticket**: Define la estructura de los pedidos, que almacena una lista de productos adquiridos y asigna el pedido a un usuario específico. Incluye detalles como el código del ticket, fecha de compra, estado (por defecto `pending`) y monto total.
+- **User**: Define la estructura de los usuarios para el registro, asignando un rol por defecto de `user` y asociando un carrito.
 
 ### Conexión con MongoDB
 
-La conexión a MongoDB se establece usando Mongoose en el archivo `app.js`, asegurando que la base de datos esté disponible para operaciones CRUD. La base de datos utilizada se llama _SoGames_.
+La conexión a MongoDB se establece usando Mongoose en el archivo `app.js`, asegurando que la base de datos esté disponible para operaciones CRUD. La base de datos utilizada se llama _SoGames_. Adicionalmente, se debe configurar la variable de entorno `PERSISTENCE` como `MONGO` para que el backend maneje la misma.
 
 ### Paginado
 
-Se utiliza Mongoose Paginate para realizar el paginado en el index a partir del modelo de _products_, el mismo permite ordenar de forma ascendente o descendente por precio, filtrar por categoría y limitar la cantidad de productos por página.
+Se utiliza Mongoose Paginate para realizar el paginado en el índice a partir del modelo de _products_. Esta funcionalidad permite ordenar los productos de forma ascendente o descendente por precio, filtrar por categoría y limitar la cantidad de productos por página.
 
-## Multer y subida de archivos
+## Middlewares
+
+### Manejo de Errores
+
+Permite el manejo de errores desde los controlladores, enviando el mensaje de error como .json o renderizando en el frontend la vista de Error. Adicionalmente se utiliza la definición de los errores personalizados de manera de que quede de forma más organizada.
+
+### Sesión, Autenticación y Autorización
+
+Se utiliza `express-session` para mantener la sesión en MongoStore. Adicionalmente se utiliza `passport` y `JsonWebToken` como estrategia de autenticación y autorización a lo largo de la navegación del sitio, teniendo como objetivo principal no autorizar ciertos accesos y proteger la sesión del usuario así como también sus datos sensibles. Se utiliza `cookie-parser` para poder extraer los tokens generados en los inicios de sesión, y permite la navegación durante una hora sin cerrar la sesión de manera automática.
+
+### Multer y subida de archivos
 
 Multer se utiliza para manejar la subida de archivos en `realtimeproducts`. La configuración incluye la definición de almacenamiento y la validación del tipo de archivo permitido, en este caso, imagen. Adicionalmente permite visualizar el contenido antes de subir, y una vez almacenado, lo deja en la carpeta `/public/images`.
-
-## Sesión, Autenticación y Autorización
-
-Se utiliza `express-session` para mantener la sesión en MongoStore. Adicionalmente se utiliza `passport` y `JsonWebToken` como estatregia de autenticación y autorización a lo largo de la navegación del sitio, teniendo como objetivo principal no autorizar ciertos accesos y proteger la sesión del usuario así como también sus datos sensibles. Se utiliza `cookie-parser` para poder extraer los tokens generados en los inicios de sesión, y permite la navegación durante una hora sin cerrar la sesión de manera automática.
 
 ## Utils
 
@@ -151,30 +236,56 @@ El archivo `utils.js` contiene una serie de scripts y helpers diseñados para fa
 1. **Simulación de \_\_dirname en Módulos ES**:  
    Dado que los módulos ES no soportan nativamente el valor `__dirname`, se ha implementado una solución que permite obtener el directorio actual del archivo. Esto es esencial para manejar rutas de forma consistente dentro del proyecto.
 
-2. **Generación de IDs Incrementales (como método interno de uso de IDs)**:
-
-   - **Para Productos (`getNextId`)**: Calcula el siguiente ID disponible para los productos, garantizando que cada nuevo producto tenga un ID único y secuencial. Este método asegura que los productos reciban IDs incrementales, lo que facilita la gestión y referencia de los mismos en la base de datos.
-   - **Para Carritos (`getNextIdC`)**: Similar a la función anterior, pero aplicada a los carritos, asegurando que cada nuevo carrito tenga un ID único y secuencial. Esta metodología de asignación de IDs es útil para mantener la integridad y organización de los carritos en la base de datos.
-
-   **Nota Importante**: En la aplicación, se utilizan los IDs generados automáticamente por la base de datos para la interacción entre las distintas vistas. Los métodos `getNextId` y `getNextIdC` se utilizan internamente para asegurar que los IDs sean únicos y secuenciales durante la creación de nuevos productos y carritos.
-
-3. **Configuración de Multer para la Subida de Archivos**:  
+2. **Configuración de Multer para la Subida de Archivos**:  
    Se ha configurado `multer` para manejar la carga de archivos, especificando la carpeta de destino y validando que solo se permitan imágenes como tipo de archivo. Esto asegura que todos los archivos subidos cumplan con los requisitos de la aplicación.
+
+3. **Helper para Errores**:
+   Se clasifican los errores con mensajes, status y nombres de manera de manejar los errores del BackEnd de forma más organizada.
 
 4. **Helpers para Handlebars**:  
    Se incluyen helpers personalizados para Handlebars, que permiten realizar comparaciones y operaciones aritméticas básicas dentro de las plantillas.
 
+5. **Helpers para Sockets**
+   Se incluyen las emiciones del servidor de manera estandarizada para hacer más fácil las actualizaciones de los distintos datos en el backend.
+
+6. **Json Web Token**
+   Genera el token de sesión para expirar dentro de la hora.
+
+7. **Helper para Creación de Correo**
+   Contiene el body y la configuración del mismo para luego mandar el correo de confirmación de la compra, permite manejar el cuerpo del correo fuera de la lógica del servicio.
+
 ## Visualización y Gestión de E-Commerce en FrontEnd
+
+La visualización del frontend se realiza mediante plantillas de handlebars las cuales se renderizan a pedidos del backend.
 
 ### Templates de Handlebars
 
-- **index**: Permite acceder al listado completo de productos. Adicionalmente, al ingresar por primera vez, se genera un _idCart_ el cual se almacena en el local storage. Dicho valor permitirá la persistencia durante la visita del usuario.
-- **cart**: Permite la visualización del carrito actual, dejando que el usuario pueda modificar cantidades y/o eliminar productos. Adicionalmente permite realizar un checkout, el mismo eliminará el _idCart_ del local storage, y abrirá uno nuevo cuando se ingrese nuevamente a la página. Este carrito queda almacenado en la base de datos, y no se podrá modificar las cantidades ni los productos desde la sesión nueva.
-- **login**: Permite el inicio de sesión del usuario.
-- **productDetail**: Visualización de los detalles del producto seleccionado. Permite también añadir al carrito. Si el producto ya se encuentra en el carrito, no permitirá modificar la cantidad. La misma se debe hacer desde la visualización del carrito.
-- **profile**: Visualización de los datos básicos del usuario.
-- **realtimeproducts**: La aplicación cuenta con una funcionalidad en tiempo real que permite la visualización y gestión dinámica de productos desde una vista de administrador. Esta funcionalidad se implementa utilizando **Socket.io** para permitir la comunicación en tiempo real entre el servidor y el cliente, permitiendo eliminar, modificar y añadir productos en la base de datos.
-- **register**: Habilita el registro de un usuario nuevo.
+Los templates de las vistas están organizados por carpetas de manera de acceder fácilmente a cada uno de ellos.
+
+1. **Index**
+
+   - **index**: Permite acceder al listado completo de productos. Adicionalmente, al ingresar por primera vez, se genera un _idCart_ el cual se almacena en el local storage. Dicho valor permitirá la persistencia durante la visita del usuario.
+
+2. **Error**
+
+   - **error**: Renderiza los errores enviados desde el backend.
+
+3. **Administración**
+
+   - **realtimeproducts**: La aplicación cuenta con una funcionalidad en tiempo real que permite la visualización y gestión dinámica de productos desde una vista de administrador. Esta funcionalidad se implementa utilizando **Socket.io** para permitir la comunicación en tiempo real entre el servidor y el cliente, permitiendo eliminar, modificar y añadir productos en la base de datos.
+   - **realtimeusers**: Proporciona una vista en tiempo real de los usuarios activos en la aplicación. Permite a los administradores gestionar usuarios, incluyendo la opción de modificar los roles de los mismos en tiempo real.
+   - **realtimetickets**: Permite la visualización y gestión de tickets en tiempo real. Los administradores pueden ver los detalles de cada ticket, permitiendo modificar el estado del mismo según corresponda.
+
+4. **Productos**
+
+   - **productDetail**: Visualización de los detalles del producto seleccionado. Permite también añadir al carrito. Si el producto ya se encuentra en el carrito, no permitirá modificar la cantidad. La misma se debe hacer desde la visualización del carrito.
+
+5. **Usuarios**
+   - **cart**: Permite la visualización del carrito actual, dejando que el usuario pueda modificar cantidades y/o eliminar productos. Adicionalmente permite realizar un checkout, el mismo eliminará el _idCart_ del local storage, y abrirá uno nuevo cuando se ingrese nuevamente a la página. Este carrito queda almacenado en la base de datos, y no se podrá modificar las cantidades ni los productos desde la sesión nueva.
+   - **login**: Permite el inicio de sesión del usuario.
+   - **profile**: Visualización de los datos básicos del usuario.
+   - **register**: Habilita el registro de un usuario nuevo.
+   - **ticket**: Permite la visualización de pedidos anteriores, renderizando productos comprados y estado actual de la compra.
 
 ## Estructura del Proyecto
 
@@ -199,6 +310,7 @@ ProyectoFinal
 │  │  │  ├─ DAO
 │  │  │  │  ├─ CartsMongoDAO.js
 │  │  │  │  ├─ ProductsMongoDAO.js
+│  │  │  │  ├─ SessionsMongoDAO.js
 │  │  │  │  ├─ TicketsMongoDAO.js
 │  │  │  │  └─ UsersMongoDAO.js
 │  │  │  └─ models
@@ -209,6 +321,7 @@ ProyectoFinal
 │  │  ├─ repositories
 │  │  │  ├─ cartsRepository.js
 │  │  │  ├─ productsRepository.js
+│  │  │  ├─ sessionsRepository.js
 │  │  │  ├─ ticketRepository.js
 │  │  │  └─ usersRepository.js
 │  │  └─ DAOFactory.js
@@ -230,6 +343,7 @@ ProyectoFinal
 │  │  ├─ cart.services.js
 │  │  ├─ products.services.js
 │  │  ├─ session.service.js
+│  │  ├─ sessions.services.js
 │  │  ├─ tickets.services.js
 │  │  └─ users.services.js
 │  ├─ utils
@@ -241,11 +355,14 @@ ProyectoFinal
 │  │  │  ├─ handlebarsHelpers.js
 │  │  │  └─ socketUtils.js
 │  │  └─ session
+│  │     ├─ mailUtils copy.js
 │  │     ├─ mailUtils.js
 │  │     └─ webTokenUtil.js
 │  ├─ views
 │  │  ├─ admin
 │  │  │  ├─ realtimeproducts.hbs
+│  │  │  ├─ realtimetickets copy.hbs
+│  │  │  ├─ realtimetickets.hbs
 │  │  │  └─ realtimeusers.hbs
 │  │  ├─ error
 │  │  │  └─ error.hbs
@@ -257,7 +374,8 @@ ProyectoFinal
 │  │  │  ├─ cart.hbs
 │  │  │  ├─ login.hbs
 │  │  │  ├─ profile.hbs
-│  │  │  └─ register.hbs
+│  │  │  ├─ register.hbs
+│  │  │  └─ ticket.hbs
 │  │  └─ index.hbs
 │  └─ app.js
 ├─ package-lock.json
@@ -265,23 +383,25 @@ ProyectoFinal
 └─ README.md
 
 
+
+
 ```
 
 ### Descripción de Carpetas y Archivos
 
-### Descripción de Carpetas y Archivos
-
-- **`src/config/`**: Archivos de configuración de la aplicación.
-- **`src/middleware/`**: Middleware personalizado para la aplicación.
-- **`src/models/`**: Modelos de datos que definen la estructura de la base de datos.
-- **`src/public/`**: Archivos estáticos que se sirven al cliente.
-- **`src/router/`**: Definición de rutas para la API y vistas del frontend.
-- **`src/utils/`**: Scripts utilitarios y helpers.
-- **`src/views/`**: Plantillas Handlebars para renderizar el frontend.
-- **`src/app.js`**: Archivo principal que arranca el servidor y configura la aplicación.
+- **`src/config/`**: Archivos de configuración de la aplicación, incluyendo configuración de correo, autenticación y persistencia.
+- **`src/controllers/`**: Controladores que manejan la lógica de negocio y las interacciones con el modelo de datos para carritos, productos, sesiones, tickets, usuarios y vistas.
+- **`src/DAO/`**: Contiene la lógica de acceso a datos, incluyendo patrones DTO y DAO para interactuar con MongoDB.
+- **`src/middleware/`**: Middleware personalizado para manejar la autenticación y errores en la aplicación.
+- **`src/public/`**: Archivos estáticos, incluyendo imágenes, scripts y estilos que se sirven al cliente.
+- **`src/router/`**: Definición de rutas para la API y las vistas del frontend.
+- **`src/services/`**: Servicios que encapsulan la lógica de negocio relacionada con carritos, productos, sesiones, tickets y usuarios.
+- **`src/utils/`**: Scripts utilitarios y helpers, incluyendo utilidades para el manejo de archivos, errores y WebSockets.
+- **`src/views/`**: Plantillas Handlebars para renderizar la interfaz de usuario en el frontend.
+- **`src/app.js`**: Archivo principal que inicializa el servidor y configura la aplicación.
 - **`.gitignore`**: Especifica los archivos y carpetas que deben ser ignorados por Git.
-- **`package.json`**: Contiene la configuración del proyecto y las dependencias.
-- **`README.md`**: Proporciona documentación sobre el proyecto.
+- **`package.json`**: Contiene la configuración del proyecto, incluyendo dependencias y scripts.
+- **`README.md`**: Documentación del proyecto que proporciona información general y de uso.
 
 ## Recursos Utilizados
 
@@ -317,3 +437,5 @@ Este proyecto utiliza las siguientes tecnologías y bibliotecas:
   - Versión: `^16.4.5`
 - **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)**: Biblioteca para trabajar con JSON Web Tokens (JWT).
   - Versión: `^9.0.2`
+- **[Nodemailer](https://nodemailer.com/)**: Biblioteca para enviar correos electrónicos desde Node.js.
+  - Versión: `^6.9.15`

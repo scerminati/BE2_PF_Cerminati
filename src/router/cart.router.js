@@ -9,6 +9,7 @@ import {
   emptyCartController,
   deleteProductInCartController,
 } from "../controllers/carts.controllers.js";
+import { checkoutCartController } from "../controllers/sessions.controller.js";
 
 import {
   isAuthenticated,
@@ -24,6 +25,8 @@ router.get("/:cid", isAuthenticated, isUserCart, getCartController);
 router.get("/:cid/QT", navigate, getCartQTController);
 
 router.post("/", isAuthenticated, isAdmin, createCartController);
+
+router.post("/:cid/checkout", isAuthenticated, checkoutCartController);
 
 router.put(
   "/:cid/product/:pid",
