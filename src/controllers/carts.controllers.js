@@ -34,7 +34,6 @@ export const getAllCartsController = async (req, res, next) => {
 };
 
 export const getCartController = async (req, res, next) => {
-
   const idCarrito = req.params.cid;
 
   if (!idCarrito || idCarrito.length !== 24) {
@@ -56,15 +55,15 @@ export const getCartQTController = async (req, res, next) => {
   const idCarrito = req.params.cid;
 
   if (!idCarrito || idCarrito.length !== 24) {
-    return res.json({ payload: 0 });
+    return res.status(401).json({ payload: 0 });
   }
   try {
-
     let QT = await getCartQTService(idCarrito);
 
     if (QT === null) {
       return next(new NotFoundError("No se encuentra el carrito con dicho id"));
     }
+
     return res.status(200).json({
       msg: `Mostrando cantidad de carrito ${idCarrito}`,
       payload: QT,
@@ -96,8 +95,6 @@ export const editProductInCartController = async (req, res, next) => {
     return next(new ValidationError("ID de producto inválido."));
   }
   let quantity = parseInt(req.body.quantity) || null;
-
-  
 
   try {
     const { cartUpdated, productVirtual } = await editProductInCartService(

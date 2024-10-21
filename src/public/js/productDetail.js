@@ -31,19 +31,14 @@ socket.on("Product Update", (updatedProduct) => {
 // Función para verificar si el producto está en el carrito
 const isProductInCart = async (cartId, productId) => {
   try {
-    if (cartId) {
-      const response = await fetch(`/api/carts/${cartId}`);
-      if (response.ok) {
-        let { payload: cart } = await response.json();
-        console.log(cart.products);
-        let result = cart.products.some(
-          (product) => product.product._id.toString() === productId
-        );
-        console.log(result);
-        return result;
-      } else {
-        throw new Error("No se pudo obtener el carrito.");
-      }
+    const response = await fetch(`/api/carts/${cartId}`);
+    if (response.ok) {
+      const cart = await response.json();
+      return cart.carritoEncontrado.products.some(
+        (product) => product._id.toString() === productId
+      );
+    } else {
+      throw new Error("No se pudo obtener el carrito.");
     }
   } catch (error) {
     console.error(
@@ -79,9 +74,8 @@ const addToCart = async (cartId, productId, quantity) => {
 
 // Función para manejar la carga de la página de detalles
 document.addEventListener("DOMContentLoaded", async function () {
-  // Función para actualizar el enlace del carrito
-  updateLink();
-
+  await updateCartLink();
+  const cartId = await getCartId();
   // Escuchar actualizaciones de productos desde el servidor
   socket.on("Cart Update", (updatedCart) => {
     //console.log("Carrito actualizado:", updatedCart);
@@ -96,26 +90,25 @@ document.addEventListener("DOMContentLoaded", async function () {
     ?.getAttribute("data-product-id");
   const addToCartButton = document.getElementById("add-to-cart");
   const agregadoAlCarrito = document.getElementById("agregarCarritoOk");
-  if (addToCartButton) {
-    if (cartId && productId) {
-      // Ocultar el botón si el producto ya está en el carrito
-      const productInCart = await isProductInCart(cartId, productId);
-      if (productInCart) {
-        addToCartButton.style.display = "none";
-        agregadoAlCarrito.innerText =
-          "El producto ya está en tu carrito, ir al mismo para editar la cantidad.";
-      } else {
-        //Agregar producto al carrito, habilita la carga.
-        addToCartButton.addEventListener("click", async function () {
-          const quantity = document.getElementById("quantity").value;
-          await addToCart(cartId, productId, quantity);
-          agregadoAlCarrito.innerText = "Producto Agregado al carrito";
-        });
-      }
-    } else if (!cartId) {
-      addToCartButton.addEventListener("click", function () {
-        window.location.href = "/login"; // Redirigir solo al hacer clic
+
+  if (addToCartButton && cartId && productId) {
+    // Ocultar el botón si el producto ya está en el carrito
+    const productInCart = await isProductInCart(cartId, productId);
+    if (productInCart) {
+      addToCartButton.style.display = "none";
+      agregadoAlCarrito.innerText =
+        "El producto ya está en tu carrito, ir al mismo para editar la cantidad.";
+    } else {
+      //Agregar producto al carrito, habilita la carga.
+      addToCartButton.addEventListener("click", async function () {
+        const quantity = document.getElementById("quantity").value;
+        await addToCart(cartId, productId, quantity);
+        agregadoAlCarrito.innerText = "Producto Agregado al carrito";
       });
     }
+  } else if (addToCartButton) {
+    addToCartButton.addEventListener("click", function () {
+      window.location.href = "/login";
+    });
   }
 });

@@ -121,17 +121,17 @@ export const cartLinkUpdateController = async (req, res) => {
   if (req.user) {
     idUser = req.user._id;
     if (!idUser) {
-      return null;
+      return res.status(204).json({ msg: "Usuario no encontrado" });
     }
 
     let userCartId = await cartLinkUpdateService(idUser);
     if (!userCartId) {
-      return null;
+      return res.status(204).json({ msg: "Carrito no encontrado" });
     } else {
       return res
         .status(200)
         .json({ msg: "Carrito encontrado", payload: userCartId });
     }
   }
-  return null;
+  return res.status(204).json({ msg: "Usuario no loggeado" });
 };

@@ -19,7 +19,7 @@ socket.on("Cart Update", (updatedCart) => {
   }
 });
 
-// Función para actualizar el enlace del carrito
+
 
 // Función para agregar un producto al carrito
 const addToCart = async (productId) => {
@@ -63,23 +63,12 @@ socket.on("Product Update", (updatedProduct) => {
   if (stockElement) {
     // Actualizar el stock en la vista
     stockElement.innerHTML = `Stock: ${updatedProduct.stock}`;
-
-    const button = document.querySelector(
-      `button[data-product-id="${updatedProduct._id}"]`
-    );
-    if (button) {
-      if (updatedProduct.stock > 0) {
-        button.classList.remove("invisible"); // Mostrar el botón si hay stock
-      } else {
-        button.classList.add("invisible"); // Ocultar el botón si no hay stock
-      }
-    }
   }
 });
 
 // Añadir eventos a los botones de "Agregar al Carrito"
-document.addEventListener("DOMContentLoaded", () => {
-  updateLink();
+document.addEventListener("DOMContentLoaded", async () => {
+   await updateCartLink();
 
   document.querySelectorAll(".add-to-cart").forEach((button) => {
     button.addEventListener("click", () => {
