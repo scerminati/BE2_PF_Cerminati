@@ -33,14 +33,14 @@ const isProductInCart = async (cartId, productId) => {
   try {
     const response = await fetch(`/api/carts/${cartId}`);
     if (response.ok) {
-      const cart = await response.json();
-      return cart.carritoEncontrado.products.some(
-        (product) => product._id.toString() === productId
-      );
+      const { payload: cart } = await response.json();
+      return cart.products.some((product) => product.product._id === productId);
     } else {
+      tostada("Error en la respuesta del servidor.")
       throw new Error("No se pudo obtener el carrito.");
     }
   } catch (error) {
+    tostada("Error al verificar el producto en el carrito.");
     console.error(
       "Error al verificar el producto en el carrito:",
       error.message
@@ -65,9 +65,11 @@ const addToCart = async (cartId, productId, quantity) => {
       tostada("Producto agregado al carrito");
       socket.emit("Product Update", productId);
     } else {
+      tostada("Error en la respuesta del servidor.")
       throw new Error("No se pudo agregar el producto al carrito");
     }
   } catch (error) {
+    tostada("Error en el servidor.");
     console.error("Error:", error, message);
   }
 };

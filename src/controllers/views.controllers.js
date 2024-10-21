@@ -156,7 +156,7 @@ async function getSessionStock(req, prod) {
     return null;
   }
   cartId = req.user.cart;
-  if (!cartId || cartId.length !== 24) {
+  if (!cartId || cartId.toString().length !== 24) {
     return null;
   }
 

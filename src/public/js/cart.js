@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               });
 
               if (!response.ok) {
+                tostada("Error en la respuesta del servidor.")
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
 
@@ -54,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               carritoVacio();
               tostada("Carrito vacío, todos los productos eliminados");
             } catch (error) {
+              tostada("Error en el servidor");
               console.error(
                 "Error al eliminar todos los productos del carrito:",
                 error.message
@@ -75,6 +77,7 @@ document.addEventListener("DOMContentLoaded", async function () {
               );
 
               if (!response.ok) {
+                tostada("Error en la respuesta del servidor.")
                 throw new Error("Error al procesar la compra");
               }
 
@@ -89,6 +92,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 window.location.href = "/";
               }, 2000);
             } catch (error) {
+              tostada("Error en el Servidor.");
               console.error("Error al procesar el checkout:", error.message);
             }
           });
@@ -139,6 +143,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   .toFixed(2);
                 totalPriceElement.textContent = `Total: $${totalPrice}`;
               } else {
+                tostada("Error al cargar la página.");
                 console.error(
                   "Elemento para el total no encontrado en el DOM."
                 );
@@ -173,6 +178,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
+                  tostada("Error en la respuesta del servidor.")
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
@@ -180,6 +186,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 tostada("Cantidad de producto actualizado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {
+                tostada("Error al actualizar la cantidad del producto.");
                 console.error(
                   "Error al actualizar la cantidad del producto:",
                   error.message
@@ -201,6 +208,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 );
 
                 if (!response.ok) {
+                  tostada("Error en la respuesta del servidor.")
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
@@ -208,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 tostada("Producto Eliminado");
                 socket.emit("Cart Update", updatedCart);
               } catch (error) {
+                tostada("Error al eliminar el producto del carrito.");
                 console.error(
                   "Error al eliminar el producto del carrito:",
                   error.message
@@ -219,9 +228,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           carritoVacio();
         }
       } else {
+        tostada("Error al obtener el carrito.")
         console.error("Error al obtener el carrito:", response.statusText);
       }
     } catch (error) {
+      tostada("Error en el servidor.");
       console.error("Error al obtener el carrito:", error.message);
     }
   } else {

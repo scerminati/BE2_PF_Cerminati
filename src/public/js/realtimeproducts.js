@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (!response.ok) {
+        tostada("Error en la respuesta del servidor.");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
@@ -106,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
       cancelOp();
       listado.scrollTop = listado.scrollHeight;
     } catch (error) {
+      tostada("Error al agregar el producto.");
       console.error("Error al agregar el producto:", error.message);
     }
   }
@@ -121,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
+          tostada("Error en la respuesta del servidor.");
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -130,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
         socket.emit("Product Deleted", deletedProduct);
         tostada("Producto eliminado");
       } catch (error) {
+        tostada("Error al eliminar el producto");
         console.error("Error al eliminar el producto:", error.message);
       }
     }
@@ -147,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         const response = await fetch(`/api/products/${productId}`);
         if (!response.ok) {
+          tostada("Error en la respuesta del servidor.");
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -177,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
         resetBtn.style.display = "none";
         tituloHTML.innerHTML = `Modificar el producto con id ${productId}`;
       } catch (error) {
+        tostada("Error al obtener los datos del producto.");
         console.error(
           "Error al obtener los datos del producto:",
           error.message
@@ -204,6 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (!response.ok) {
+        tostada("Error en la respuesta del servidor.");
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
@@ -215,6 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       cancelOp();
     } catch (error) {
+      tostada("Error al actualizar el producto.");
       console.error("Error al actualizar el producto:", error.message);
     }
   }

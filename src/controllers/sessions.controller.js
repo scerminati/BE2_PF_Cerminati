@@ -100,13 +100,17 @@ export const checkoutCartController = async (req, res, next) => {
     return next(new ValidationError("ID usuario inválido."));
   }
   idUser = req.user._id;
-
+  const idUserCart = req.user.cart;
   if (!idUser || idUser.toString().length !== 24) {
     return next(new ValidationError("ID usuario inválido."));
   }
 
+  if (idUserCart != idCarrito) {
+    return next(new ValidationError("El carrito no pertenece al usuario."));
+  }
+
   try {
-    let ticket = await checkoutService(idUser, idCarrito);
+    let ticket = await checkoutService(idUser);
 
     return res
       .status(200)
@@ -120,7 +124,7 @@ export const cartLinkUpdateController = async (req, res) => {
   let idUser;
   if (req.user) {
     idUser = req.user._id;
-    if (!idUser) {
+    if (!idUser || idUser.toString().length !== 24) {
       return res.status(204).json({ msg: "Usuario no encontrado" });
     }
 

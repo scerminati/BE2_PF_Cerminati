@@ -71,7 +71,9 @@ export const editProductInCartService = async (id, prod, qty) => {
     qty = prodIndex !== -1 ? cart.products[prodIndex].quantity + 1 : 1;
   }
 
+  console.log(product.stock);
   if (product.stock < qty) {
+    console.log("entré");
     throw new InsufficientStockError("No hay suficiente stock del producto");
   }
 
@@ -134,14 +136,13 @@ export const deleteProductInCartService = async (id, prod) => {
 };
 
 export const getVirtualStockService = async (id, prod) => {
-  let cart = getCartService(id);
+  let cart = await getCartService(id);
   let cartProducts = cart.products;
 
   prod.forEach((product) => {
     const cartProduct = cartProducts.find(
       (cartItem) => cartItem.product._id.toString() === product._id.toString()
     );
-
     if (cartProduct) {
       const newStock = product.stock - cartProduct.quantity;
       product.stock = newStock >= 0 ? newStock : 0;

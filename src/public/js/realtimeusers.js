@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
+          tostada("Error en la respuesta del servidor.")
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -49,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         socket.emit("User Change", newUser);
         tostada("Nuevo rol de Usuario");
       } catch (error) {
+        tostada("Error al cambiar el rol.")
         console.error("Error al cambiar de rol", error.message);
       }
     }
@@ -64,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!response.ok) {
+          tostada("Error en la respuesta del servidor.")
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
@@ -73,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
         socket.emit("User Change", newUser);
         tostada("Nuevo rol de Administrador");
       } catch (error) {
+        tostada("Error al cambiar el rol.")
         console.error("Error al cambiar de rol", error.message);
       }
     }

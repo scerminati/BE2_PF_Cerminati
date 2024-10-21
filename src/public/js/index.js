@@ -19,8 +19,6 @@ socket.on("Cart Update", (updatedCart) => {
   }
 });
 
-
-
 // Función para agregar un producto al carrito
 const addToCart = async (productId) => {
   const cartId = await getCartId();
@@ -36,11 +34,11 @@ const addToCart = async (productId) => {
           body: JSON.stringify({ productId }),
         }
       );
-
       if (response.ok) {
         tostada("Producto agregado al carrito.");
         socket.emit("Product Update", productId);
       } else {
+        tostada("Error en la respuesta del servidor.");
         throw new Error("No se pudo agregar el producto al carrito");
       }
     } catch (error) {
@@ -68,7 +66,7 @@ socket.on("Product Update", (updatedProduct) => {
 
 // Añadir eventos a los botones de "Agregar al Carrito"
 document.addEventListener("DOMContentLoaded", async () => {
-   await updateCartLink();
+  await updateCartLink();
 
   document.querySelectorAll(".add-to-cart").forEach((button) => {
     button.addEventListener("click", () => {

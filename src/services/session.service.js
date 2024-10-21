@@ -20,18 +20,13 @@ import mongoose from "mongoose";
 import { sendEmail } from "../config/mail.config.js";
 import { emailBody } from "../utils/session/mailUtils.js";
 
-export const checkoutService = async (userId, cartId) => {
+export const checkoutService = async (userId) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     let user = await getCurrentLoggedUserService(userId);
     let userCart = await getCartService(user.cart);
-    let cartId;
-
-    if ((userCart != cartId)) {
-      throw new ValidationError(`El Carrito no pertenece al usuario`);
-    }
 
     if (!userCart || userCart.products.length === 0) {
       throw new ValidationError(

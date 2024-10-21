@@ -15,6 +15,7 @@ const getCartId = async () => {
 
     return data.payload;
   } catch (error) {
+    tostada("Error del servidor.")
     console.error("Error de servidor:", error.message);
   }
 };
@@ -32,6 +33,7 @@ const getQT = async () => {
         cartCount.innerText = 0;
       }
     } catch (error) {
+      tostada("Error del servidor.")
       console.error("Error:", error.message);
     }
   } else {
